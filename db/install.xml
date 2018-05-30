@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/newmodule/db" VERSION="20101203" COMMENT="XMLDB file for Moodle mod/newmodule"
+<XMLDB PATH="mod/randomstrayquotes/db" VERSION="20101203" COMMENT="XMLDB file for Moodle mod/randomstrayquotes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="newmodule" COMMENT="Default comment for newmodule, please edit me">
+    <TABLE NAME="randomstrayquotes" COMMENT="Default comment for randomstrayquotes, please edit me">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course newmodule activity belongs to"/>
