@@ -39,11 +39,14 @@ require_course_login($course);
 $params = array(
     'context' => context_course::instance($course->id)
 );
-$event = \mod_newmodule\event\course_module_instance_list_viewed::create($params);
+$event = \mod_randomstrayquotes\event\course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
-$strname = get_string('modulenameplural', 'mod_randomstrayquotes');
+$strname = get_string('modulenameplural', 'randomstrayquotes');
+//$strname = get_string('modulenameplural', 'mod_randomstrayquotes');
+$strnames = get_string('modulename', 'randomstrayquotes');
+
 $PAGE->set_url('/mod/randomstrayquotes/index.php', array('id' => $id));
 $PAGE->navbar->add($strname);
 $PAGE->set_title("$course->shortname: $strname");
@@ -52,9 +55,17 @@ $PAGE->set_pagelayout('incourse');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strname);
-
+/*
 if (! $newmodules = get_all_instances_in_course('randomstrayquotes', $course)) {
     notice(get_string('nonewmodules', 'randomstrayquotes'), new moodle_url('/course/view.php', array('id' => $course->id)));
+
+if (! $randomstrayquotes = get_all_instances_in_course('randomstrayquotes', $course)) {
+    notice(get_string('nonrandomstrayquotes', 'randomstrayquotes'), new moodle_url('/course/view.php', array('id' => $course->id)));
+}
+*/ 
+if (! $randomstrayquotes = get_all_instances_in_course("randomstrayquotes", $course)) {
+    notice(get_string('thereareno', 'moodle', $strnames), "../../course/view.php?id=$course->id");
+    die;
 }
 
 $usesections = course_format_uses_sections($course->format);

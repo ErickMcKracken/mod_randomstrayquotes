@@ -36,7 +36,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
  * @copyright  2016 Your Name <your@email.address>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_newmodule_mod_form extends moodleform_mod {
+class mod_randomstrayquotes_mod_form extends moodleform_mod {
 
     /**
      * Defines forms elements

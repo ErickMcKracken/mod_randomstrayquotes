@@ -83,7 +83,7 @@ function randomstrayquotes_add_instance(stdClass $randomstrayquotes, mod_randoms
 
     $randomstrayquotes->id = $DB->insert_record('randomstrayquotes', $randomstrayquotes);
 
-    newmodule_grade_item_update($randomstrayquotes);
+    randomstrayquotes_grade_item_update($randomstrayquotes);
 
     return $randomstrayquotes->id;
 }
@@ -128,7 +128,7 @@ function randomstrayquotes_refresh_events($courseid = 0) {
     global $DB;
 
     if ($courseid == 0) {
-        if (!$randomstrayquotes = $DB->get_records('randoomstrayquotes')) {
+        if (!$randomstrayquotes = $DB->get_records('randomstrayquotes')) {
             return true;
         }
     } else {
