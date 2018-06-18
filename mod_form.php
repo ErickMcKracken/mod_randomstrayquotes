@@ -42,7 +42,7 @@ class mod_randomstrayquotes_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
+        global $CFG, $COURSE, $DB;
 
         $mform = $this->_form;
 
@@ -67,12 +67,55 @@ class mod_randomstrayquotes_mod_form extends moodleform_mod {
             $this->add_intro_editor();
         }
 
-        // Adding the rest of newmodule settings, spreading all them into this fieldset
-        // ... or adding more fieldsets ('header' elements) if needed for better logic.
-        $mform->addElement('static', 'label1', 'newmodulesetting1', 'Your newmodule fields go here. Replace me!');
+        // Adding authors
+        
+        $mform->addElement('header', 'addauthors', get_string('addauthors', 'form'));
+        // Texbox to add an author
+        $attributes = array('size' => '50', 'maxlength' => '100');
+        $mform->addElement('text', 'author_name', get_string('author_name'), $attributes);
+        $mform->addRule('author_name', null, 'required', null, 'client');
+        $mform->setType('name', PARAM_TEXT);
+        
+        //Hidden textbox containing the courseid
+        $courseid = $COURSE->id;
+        $mform->addElement('hidden', 'course_id', get_string('course_id'));
+        $mform->setDefault('course_id', $courseid);    
+        $mform->setType('course_id', PARAM_TEXT);
+        
+        //Upload a picture of the author
+       /*
+        $mform->addElement('filepicker', 'userfile', get_string('authorpix'), null, array('maxbytes' => $maxbytes, 'accepted_types' => '*'));
+        $content = $mform->get_file_content('userfile');
+        $name = $mform->get_new_filename('userfile');
+        $success = $mform->save_file('userfile', $fullpath, $override);
+        $storedfile = $mform->save_stored_file('userfile');
+        */
+        
+        //Authors Listing
+        $selectArray = array();
+        $authors_arr = array();
+        $authquery = "Select distinct * from {block_strayquotes_authors}";
+        $category_arr = $DB->get_records_sql($authquery);
 
-        $mform->addElement('header', 'newmodulefieldset', get_string('newmodulefieldset', 'randomstrayquotes'));
-        $mform->addElement('static', 'label2', 'newmodulesetting2', 'Your newmodule fields go here. Replace me!');
+        foreach($authors_arr as $author) {
+            $key = $author->id;
+            $value = $author->author_name;
+            $selectArray[$key] = $value;
+         if ($authors_arr ) {
+                    $renderer = $this->page->get_renderer('mod_randomstrayquotes');
+                    $content = $renderer->display_authors($authors_arr);
+                } else {
+                    $content = 'Aucuns auteurs n\'ont été saisis pour le moment';
+                }
+        }
+        
+        
+        
+        
+        
+        
+        
+        
 
         // Add standard grading elements.
         $this->standard_grading_coursemodule_elements();
@@ -82,5 +125,7 @@ class mod_randomstrayquotes_mod_form extends moodleform_mod {
 
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
+        
+        
     }
 }

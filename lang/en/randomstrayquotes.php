@@ -37,6 +37,11 @@ $string['newmodule:view'] = 'View newmodule';
 $string['newmodulefieldset'] = 'Custom example fieldset';
 $string['newmodulename'] = 'newmodule name';
 $string['newmodulename_help'] = 'This is the content of the help tooltip associated with the newmodulename field. Markdown syntax is supported.';
-$string['newmodule'] = 'newmodule';
-$string['pluginadministration'] = 'newmodule administration';
+$string['newmodule'] = 'New module';
+$string['pluginadministration'] = 'New module administration';
 $string['pluginname'] = 'randomstrayquotes';
+$string['addauthors'] = 'Add/Edit authors';
+$string['newmodulename'] = 'New module name';  
+$string['author_name'] = 'Autor name';  
+$string['author_pix'] = 'Autor picture'; 
+
