@@ -1,49 +1,30 @@
 <?php
-
-
-//require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once('../../config.php');
-//require_once ($CFG->dirroot.'/lib/formslib.php');
-//require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
+global $CFG, $DB, $PAGE, $COURSE;
 
-//global $CFG, $DB, $PAGE, $COURSE;
-/*
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title('Add Quotes');
+$PAGE->set_title('Ajout de catégories');
 $PAGE->set_heading('Form Add Quote');
-$PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/add_quotes.php');
- */
-
-$form = new \mod_randomstrayquotes\forms\addQuotes();
-
+$PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/add_category.php');
 echo $OUTPUT->header();
-echo $OUTPUT->heading('Toto');
 
-echo $form->display();
-
-echo $OUTPUT->footer();
-
-//echo $OUTPUT->header();
-
-//class mod_randomstrayquotes_add_quotes extends moodleform_mod {
-    
-//    protected function definition() {
-//        global $PAGE, $DB;
-//        $mform = $this->_form;
-        
-        /*
+defined('MOODLE_INTERNAL') || die;
+class block_strayquotes_add_quote extends   block_edit_form {
+    protected function add_quotes($mform) {
+        global $PAGE, $DB;
        // Field for editing the module title
-       $mform->addElement('header', 'configheader', 'strayquotes config');
+        $mform->addElement('header', 'configheader', 'strayquotes config');
         
         // Combobox with the authors
         $queryauth = "Select distinct * from {block_strayquotes_authors}";
         $authors_arr = $DB->get_records_sql($queryauth);
         $authors = ['Choose author'];
         foreach ($authors_arr as $author) {
-            $key = $author->author;
+            $key = str_replace(" ","_", $author->author);
             $authors[$key] = $author->author;
         }
+
         $mform->addElement('select', 'id', get_string('author_name'), $authors);
         $mform->setType('id', PARAM_INT);
         
@@ -62,18 +43,13 @@ echo $OUTPUT->footer();
             $selectArray[$key] = $value;
         }
         
-        */
-       
-       
          // Add the quote
-//        $mform->addElement('textarea', 'quote', get_string("quote", "survey"), 'wrap="virtual" rows="20" cols="40"');
-//        $mform->addRule('quote', null, 'required', null, 'client');
-//        $mform->setType('quote', PARAM_TEXT);
+        $mform->addElement('textarea', 'quote', get_string("quote", "survey"), 'wrap="virtual" rows="20" cols="40"');
+        $mform->addRule('quote', null, 'required', null, 'client');
+        $mform->setType('quote', PARAM_TEXT);
         
-        
-        /*
         // Indicate the source
-       $mform->addElement('text', 'config_source', get_string('source', 'block_strayquotes'));
+        $mform->addElement('text', 'config_source', get_string('source', 'block_strayquotes'));
         $mform->setType('source', PARAM_TEXT);
         
         // Is the quote visible or not?
@@ -92,7 +68,6 @@ echo $OUTPUT->footer();
         $mform->addElement('hidden', 'time_added',  get_string('source', 'time_added'));
         $mform->setDefault('course_id', $date); 
         $mform->setType('time_added', PARAM_TEXT);
-        */
 
-//     }
-//}
+     }
+}
