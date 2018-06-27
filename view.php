@@ -32,6 +32,8 @@ require_once(dirname(__FILE__).'/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
+
+global $USER;
 /*
 if ($id) {
     $cm         = get_coursemodule_from_id('randomstrayquotes', $id, 0, false, MUST_EXIST);
@@ -69,6 +71,8 @@ $event->trigger();
 
 // Print the page header.
 
+//$PAGE->requires->css(new moodle_url('/mod/randomstrayquotes/styles/bootstrap.css'));
+//$PAGE->requires->css(new moodle_url('/mod/randomstrayquotes/styles/bootstrap-grid.css'));
 $PAGE->set_url('/mod/randomstrayquotes/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($randomstrayquotes->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -94,7 +98,32 @@ if ($randomstrayquotes->intro) {
 }
 
 // Replace the following lines with you own code.
-echo $OUTPUT->heading('Yay! It works!');
+echo $OUTPUT->heading('Manage Quotes');
 
+
+
+ //Quotes Listing
+        $selectArray = array();
+        //$quotequery = "Select * from {randomstrayquotes_quotes}";
+        $quotequery = "Select * from {block_strayquotes}";
+        $quotes_arr = $DB->get_records_sql($quotequery);
+
+            if ($quotes_arr ) {
+
+                    $renderer = $PAGE->get_renderer('mod_randomstrayquotes');
+                    $content = $renderer->display_quotes($quotes_arr,$DB, $COURSE, $USER);
+                   // echo ($author->author_name);
+                } else {
+                    $content = 'Aucuns auteurs n\'ont été saisis pour le moment';
+                }
+                
+                echo ($content);
+            
+                
+       //  echo html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id, 'userid' => $this->user->id)), $courseshortname, array('class' => 'YOUR-CLASS'));      
+          echo html_writer::link(new moodle_url('/mod/randomstrayquotes/add_authors.php', array('courseid' => $course->id, 'userid' => $USER->id)), get_string('Addauthors', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+          echo html_writer::link(new moodle_url('/mod/randomstrayquotes/add_categories.php', array('courseid' => $course->id, 'userid' => $USER->id)), get_string('Addcategories', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+          echo html_writer::link(new moodle_url('/mod/randomstrayquotes/add_quotes.php', array('courseid' => $course->id, 'userid' => $USER->id)), get_string('Addquotes', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+          
 // Finish the page.
 echo $OUTPUT->footer();

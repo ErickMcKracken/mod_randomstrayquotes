@@ -28,6 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['quote'] = 'Quote';
 $string['modulename'] = 'randomstrayquotes';
 $string['modulenameplural'] = 'randomstrayquotes';
 $string['modulename_help'] = 'Use the newmodule module for... | Randomstrayquotes module allows...';
@@ -43,5 +44,23 @@ $string['pluginname'] = 'randomstrayquotes';
 $string['addauthors'] = 'Add/Edit authors';
 $string['newmodulename'] = 'New module name';  
 $string['author_name'] = 'Autor name';  
-$string['author_pix'] = 'Autor picture'; 
+$string['author_picture'] = 'Autor picture'; 
+$string['course_id'] = 'Course id';
+$string['Addauthors'] = 'Add authors';
+$string['Edit'] = 'Edit';
+$string['Addauthors'] = 'Add authors';
+$string['Addcategories'] = 'Add categories';
+$string['Addquotes'] = 'Add quotes';
+$string['quotes'] = 'quotes';
+$string['category'] = 'Category';
+$string['source'] = 'Source';
+$string['visible'] = 'Visible';
+$string['yes'] = 'Yes';
+$string['no'] = 'No';
+$string['general'] = 'General';
+$string['category_name'] = 'Category name';
+$string['author_name'] = 'Author name';
+$string['AuthorPicture'] = 'Author\'s picture';
+$string['delete'] = 'Delete';
+$string['General'] = 'General';
 

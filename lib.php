@@ -442,12 +442,37 @@ function randomstrayquotes_pluginfile($course, $cm, $context, $filearea, array $
     global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
-        send_file_not_found();
+        return false;
     }
-
     require_login($course, true, $cm);
 
-    send_file_not_found();
+    //$canmanageactivity = has_capability('moodle/course:manageactivities', $context);
+    
+    if ($filearea === 'content') {
+        $revision = (int)array_shift($args); // Prevents caching problems - ignored here.
+        $relativepath = implode('/', $args);
+        //$fullpath = "/$context->id/mod_randomstrayquotes/content/0/$relativepath";
+        $fullpath = "/1/mod_randomstrayquotes/content/0/$relativepath";
+        // TODO: add any other access restrictions here if needed!
+
+    }
+    else {
+        return false;
+    }
+    
+    $fs = get_file_storage();
+    $fs->get_file_by_id($fileid);
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        if ($filearea === 'content') { // Return file not found straight away to improve performance.
+            send_header_404();
+            die;
+        }
+        return false;
+    }
+
+    // Finally send the file.
+    send_stored_file($file, 0, 0, false, $options);
+    
 }
 
 /* Navigation API */

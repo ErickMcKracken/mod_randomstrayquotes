@@ -68,54 +68,29 @@ class mod_randomstrayquotes_mod_form extends moodleform_mod {
         }
 
         // Adding authors
+        /*
+        $mform->addElement('header', 'add_authors', get_string('add_authors', 'form'));
+        // Put an array of buttons on the form
+        $buttonarray=array();
+        $buttonarray[] =& $mform->createElement('button', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('cancel'));
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+       
+        global $USER;
+        html_writer::link(new moodle_url('/mod/randomstrayquotes/add_authors.php', array('id' => $COURSE->id)), array('class' => 'btn btn-default'));
+       // <a href="http://moodle.org" class="btn btn-default"> Moodle Home</a>
         
-        $mform->addElement('header', 'addauthors', get_string('addauthors', 'form'));
-        // Texbox to add an author
-        $attributes = array('size' => '50', 'maxlength' => '100');
-        $mform->addElement('text', 'author_name', get_string('author_name'), $attributes);
-        $mform->addRule('author_name', null, 'required', null, 'client');
-        $mform->setType('name', PARAM_TEXT);
-        
-        //Hidden textbox containing the courseid
-        $courseid = $COURSE->id;
-        $mform->addElement('hidden', 'course_id', get_string('course_id'));
-        $mform->setDefault('course_id', $courseid);    
-        $mform->setType('course_id', PARAM_TEXT);
-        
-        //Upload a picture of the author
-       /*
-        $mform->addElement('filepicker', 'userfile', get_string('authorpix'), null, array('maxbytes' => $maxbytes, 'accepted_types' => '*'));
-        $content = $mform->get_file_content('userfile');
-        $name = $mform->get_new_filename('userfile');
-        $success = $mform->save_file('userfile', $fullpath, $override);
-        $storedfile = $mform->save_stored_file('userfile');
+        /*if (has_capability('mod/randomstrayquotes:addinstance', $this->context)) {
+            $parameters = array('randomstrayquotes' => $this->instance->id, 'courseid' => $COURSE->id);
+            $url = new moodle_url('/mod/randomstrayquotes/add_authors.php', $parameters);
+            $label = get_string('overview', 'mod_randomstrayquotes');
+            $options = array('class' => 'overviewButton');
+            $this->content->text .= html_writer::link($url, $label);
         */
         
-        //Authors Listing
-        $selectArray = array();
-        $authors_arr = array();
-        $authquery = "Select distinct * from {block_strayquotes_authors}";
-        $category_arr = $DB->get_records_sql($authquery);
-
-        foreach($authors_arr as $author) {
-            $key = $author->id;
-            $value = $author->author_name;
-            $selectArray[$key] = $value;
-         if ($authors_arr ) {
-                    $renderer = $this->page->get_renderer('mod_randomstrayquotes');
-                    $content = $renderer->display_authors($authors_arr);
-                } else {
-                    $content = 'Aucuns auteurs n\'ont été saisis pour le moment';
-                }
-        }
+        //echo $output->single_button(new moodle_url('/mod/randomstrayquotes/add_authors.php', array('id' => $id)), 'Link text', 'get');
         
-        
-        
-        
-        
-        
-        
-        
+     
 
         // Add standard grading elements.
         $this->standard_grading_coursemodule_elements();
