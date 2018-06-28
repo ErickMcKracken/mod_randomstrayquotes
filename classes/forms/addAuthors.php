@@ -33,23 +33,27 @@ $name = $mform->get_new_filename('userfile');
 $fullpath = "";
 $override = "";
 $success = $mform->save_file('userfile', $fullpath, $override);
-
-
-// Indicate the username
-$mform->addElement('hidden', 'username');
-$mform->setType('username', PARAM_TEXT);
-  
-// Indicate the courseid
-$mform->addElement('hidden', 'courseid');
-$mform->setType('courseid', PARAM_TEXT);
-
-// Indicate the date of the add
-$date = new DateTime("now", core_date::get_user_timezone_object());
-$date->setTime(0, 0, 0);
-$mform->addElement('hidden', 'time_added');
-$mform->setDefault('time_added', $date); 
-$mform->setType('time_added', PARAM_TEXT);
 */
+
+        // Textbox hidden to pass the user_id
+        $mform->addElement('hidden', 'user_id', "$author->user_id");
+        $mform->setType('user_id', PARAM_INT);
+
+         // Textbox hidden to pass the authorid
+        $mform->addElement('hidden', 'authorid', "$authorid");
+        $mform->setType('authorid', PARAM_INT);
+
+        // Textbox hidden to pass the course_id
+        $mform->addElement('hidden', 'courseid', "$author->course_id");
+        $mform->setType('courseid', PARAM_INT);
+        
+        // We format the date and time of the update
+        $date = new \DateTime("now");
+        $time = $date->format('Y-m-d_H.i');
+        
+        // Textbox hidden to pass  the date of the update
+        $mform->addElement('hidden', 'time_added', "$time");
+        $mform->setType('time_added', PARAM_ALPHANUMEXT);
 
 
 // Put an array of buttons on the form

@@ -28,7 +28,7 @@ echo $form->display();
             if ($cat_arr ) {
 
                     $renderer = $PAGE->get_renderer('mod_randomstrayquotes');
-                    $content = $renderer->display_authors($cat_arr,$DB);
+                    $content = $renderer->display_authors($cat_arr);
                 } else {
                     $content = 'Aucuns auteurs n\'ont été saisies pour le moment';
                 }

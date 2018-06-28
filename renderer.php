@@ -4,7 +4,6 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     
     function display_categories($arr_categories){
     
-
           $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
          foreach ($arr_categories as $category){
                 $catid = $category->id;
@@ -26,12 +25,33 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
          return $content;
     }
     
+    function get_image($authorid, $courseid){
+        global $DB;
+        // We define the context
+        $ctx = context_course::instance($courseid);
+        // We setup the file storage area
+        $imageid = $DB->get_record('randomstrayquotes_authors', ['id' => $authorid], 'author_picture');
+        $fs = get_file_storage();
+        // We obtain the filePathHash for the file storage area
+        $imagePathHash = $fs->get_area_files($ctx->id, 'mod_randomstrayquotes', 'content', $imageid->author_picture, "itemid, filepath, filename", false);
+        // We obtain the id of the picture file already present for the author using the imagePathHash
+        $files = array_values($imagePathHash);
+        // We store the context and the id of the file in an array of parameters that we will pass at the form instanciation
+        $file = $files[0]; 
+        //var_dump($files[0]); die();
+        $filename = $file->get_filename();
+        //$url = moodle_url::make_file_url('/pluginfile.php', $file->get_contextid()."/mod_randomstrayquotes/content/".$file->get_itemid()."/".$filename);
+        $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'mod_randomstrayquotes','content', $file->get_itemid(),'/' ,$filename);
+        return $url;
+    }
+
     function display_authors($arr_authors){
-    
+        $arr_authors = [$arr_authors[1]];
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
-         foreach ($arr_authors as $author){
-                $authorpix =  $author->author_picture;
+         foreach ($arr_authors as $author){      
+                //$authorpix =  $author->author_picture;
                 $courseid = $author->course_id;
+                $authorpix =  $this->get_image($author->id, $courseid);
                 $userid = $author->user_id;
                 $content .= html_writer::start_tag('tr', array('class' => 'author_list'));
                 $content .= html_writer::start_tag('td', array('class' => 'author_list'));
@@ -79,7 +99,8 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         $category = $DB->get_record('randomstrayquotes_categories', array('id' => $categoryid), '*', MUST_EXIST);
         return $category;
     }
-
+    
+    
     function display_quotes($arr_quotes, $DB){
         global $COURSE, $USER;
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));

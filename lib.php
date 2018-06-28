@@ -441,18 +441,19 @@ function randomstrayquotes_get_file_info($browser, $areas, $course, $cm, $contex
 function randomstrayquotes_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
     global $DB, $CFG;
 
-    if ($context->contextlevel != CONTEXT_MODULE) {
+    //echo "<pre>";
+    //var_dump(func_get_args());echo "</pre>"; die();
+    if ($context->contextlevel != CONTEXT_COURSE) {
         return false;
     }
     require_login($course, true, $cm);
 
     //$canmanageactivity = has_capability('moodle/course:manageactivities', $context);
-    
     if ($filearea === 'content') {
-        $revision = (int)array_shift($args); // Prevents caching problems - ignored here.
         $relativepath = implode('/', $args);
         //$fullpath = "/$context->id/mod_randomstrayquotes/content/0/$relativepath";
-        $fullpath = "/1/mod_randomstrayquotes/content/0/$relativepath";
+        $fullpath = "/".$context->id."/mod_randomstrayquotes/content/".$relativepath;
+        //$fullpath= "/1898224/mod_randomstrayquotes/content/136692634/toto-the-frog-1272162_640.jpg";
         // TODO: add any other access restrictions here if needed!
 
     }
