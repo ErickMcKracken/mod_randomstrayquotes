@@ -5,62 +5,84 @@ namespace mod_randomstrayquotes\forms;
 defined('MOODLE_INTERNAL') || die();
 
 #require_once('../../config.php');
-require_once ($CFG->dirroot.'/lib/formslib.php');
+require_once ($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
 /*
-require_once($CFG->libdir . '/filelib.php');
-require_once(dirname(__FILE__) . '/lib.php');
-*/
+  require_once($CFG->libdir . '/filelib.php');
+  require_once(dirname(__FILE__) . '/lib.php');
+ */
 
 class addAuthors extends \moodleform {
-     protected function definition() {
-         global $CFG, $DB, $COURSE;
-$mform = $this->_form;
+
+    protected function definition() {
+        global $CFG, $DB, $COURSE, $USER, $CONTEXT;
+
+// Array of parameters passed through the instanciation of the form
+        $customdata = $this->_customdata;
+
+// Create the form
+        $mform = $this->_form;
+
 // Texbox to add an author
-$attributes = array('size' => '50', 'maxlength' => '100');
-$mform->addElement('text', 'author_name', get_string('author_name', 'mod_randomstrayquotes'), $attributes);
-$mform->addRule('author_name', null, 'required', null, 'client');
-$mform->setType('author_name', PARAM_TEXT);
- /*
+        $attributes = array('size' => '50', 'maxlength' => '100');
+        $mform->addElement('text', 'author_name', get_string('author_name', 'mod_randomstrayquotes'), $attributes);
+        $mform->addRule('author_name', null, 'required', null, 'client');
+        $mform->setType('author_name', PARAM_TEXT);
+
+        $entry = new \stdClass;
+        $entry->id = null;
+        $draftitemid = null;
+
 // Add picture
-$maxbytes = '50000';
-$mform->addElement('filepicker', 'userfile', get_string('AuthorPicture', 'mod_randomstrayquotes'), null, array('maxbytes' => $maxbytes, 'accepted_types' => '.jpg', '.gif', '.png'));
-$context = $this->page->context;
-$contextid = $context->id;
-$component= 'mod_randomstrayquotes';
-$content = $mform->get_file_content('userfile');
-$name = $mform->get_new_filename('userfile');
-$fullpath = "";
-$override = "";
-$success = $mform->save_file('userfile', $fullpath, $override);
-*/
+        $maxbytes = '50000';
+        file_prepare_draft_area(
+                $draftitemid, $customdata['ctx']->id, 'mod_randomstrayquotes', 'content', $entry->id, array('subdirs' => 0, 'maxbytes' => $maxbytes, 'maxfiles' => 50)
+        );
+        $draftitemid = file_get_submitted_draft_itemid('userfile');
+        $mform->addElement('filemanager', 'userfile', get_string('AuthorPicture', 'mod_randomstrayquotes'), null, array('subdirs' => 0, 'maxbytes' => $maxbytes, 'areamaxbytes' => 10485760, 'maxfiles' => 1,
+            'accepted_types' => array('image'), null));
 
-        // Textbox hidden to pass the user_id
-        $mform->addElement('hidden', 'user_id', "$author->user_id");
-        $mform->setType('user_id', PARAM_INT);
+        $entry->attachments = $draftitemid;
 
-         // Textbox hidden to pass the authorid
-        $mform->addElement('hidden', 'authorid', "$authorid");
-        $mform->setType('authorid', PARAM_INT);
+        /*
+          //if (empty($entry->id)) {
+          $entry = new \stdClass;
+          $entry->id = null;
+          $entry->userfile = userfile;
+          $entry->author_name = author_name;
+          $entry->course_id = $COURSE->id;
+          $entry->time_added = time_added;
+          //}
+         */
 
+//$entry->attachments = $draftitemid;
+//$context = context_course::instance($COURSE->id); //$this->page->context;
+//$contextid = $context->id;
+//$component= 'mod_randomstrayquotes';
+//$content = $mform->get_file_content('userfile');
+//$name = $mform->get_new_filename('userfile');
+//$fullpath = "";
+//$override = "";
+//$success = $this->save_file('userfile', $fullpath, $override);
         // Textbox hidden to pass the course_id
-        $mform->addElement('hidden', 'courseid', "$author->course_id");
+        $mform->addElement('hidden', 'courseid', $customdata['courseid']);
         $mform->setType('courseid', PARAM_INT);
-        
+
         // We format the date and time of the update
         $date = new \DateTime("now");
         $time = $date->format('Y-m-d_H.i');
-        
+
         // Textbox hidden to pass  the date of the update
         $mform->addElement('hidden', 'time_added', "$time");
         $mform->setType('time_added', PARAM_ALPHANUMEXT);
 
-
-// Put an array of buttons on the form
-        $buttonarray=array();
-        $buttonarray[] =& $mform->createElement('button', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('cancel'));
+        // Display an array of buttons on the form
+        $buttonarray = array();
+        $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] = & $mform->createElement('cancel');
+        $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-             
- }   
+        $this->set_data($entry);
+    }
+
 }

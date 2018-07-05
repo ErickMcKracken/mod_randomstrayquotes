@@ -90,7 +90,7 @@ class editAuthor extends \moodleform {
         $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         
-        // Make the update in the database
+        // ??
         $this->set_data($entry);
     }
 

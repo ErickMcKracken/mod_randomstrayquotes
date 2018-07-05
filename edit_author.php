@@ -53,6 +53,7 @@ if ($data = $form->get_data()) {
     $author = $DB->get_record('randomstrayquotes_authors', ['id' => $data->authorid]);
     // We change the author's associated picture with the one we just upoalded in the file manager
     $author->author_picture = $data->userfile;
+
     // We update the author's informations with the new picture
     $DB->update_record('randomstrayquotes_authors', $author);
 }

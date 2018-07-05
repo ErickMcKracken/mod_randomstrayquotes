@@ -19,5 +19,3 @@ echo $OUTPUT->heading('Edit a quote');
 
 echo $form->display();
 echo $OUTPUT->footer();
-
-?>
