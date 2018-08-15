@@ -26,8 +26,8 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     }
     
     function get_image($authorid, $courseid){
-        global $DB;
-        $courseid = 21155;
+        global $DB, $COURSE;
+       // $courseid = 21555;
         // We define the context
         $ctx = context_course::instance($courseid);
         // We setup the file storage area
@@ -56,11 +56,13 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     }
 
     function display_authors($arr_authors){
+           global $COURSE;
        // $arr_authors = [$arr_authors[1]];
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
          foreach ($arr_authors as $author){      
                 //$authorpix =  $author->author_picture;
-                $courseid = 21155 ; //$author->course_id;
+                //$courseid = 21555 ; //$author->course_id;
+                $courseid = $author->course_id;
                 $authorpix =  $this->get_image($author->id, $courseid);
                 $userid = $author->user_id;
                 $content .= html_writer::start_tag('tr', array('class' => 'author_list'));

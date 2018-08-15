@@ -63,4 +63,9 @@ $string['author_name'] = 'Author name';
 $string['AuthorPicture'] = 'Author\'s picture';
 $string['delete'] = 'Delete';
 $string['General'] = 'General';
-
+$string['addinstance'] = 'Add Instance';
+$string['submit'] = 'Soumettre';
+$string['view'] = 'Vue';
+$string['randomstrayquotes:view'] = 'Vue';
+$string['randomstrayquotes:submit'] = 'Soumettre';
+$string['randomstrayquotes:addinstance']  = 'Add Instance';

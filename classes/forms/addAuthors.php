@@ -44,26 +44,6 @@ class addAuthors extends \moodleform {
 
         $entry->attachments = $draftitemid;
 
-        /*
-          //if (empty($entry->id)) {
-          $entry = new \stdClass;
-          $entry->id = null;
-          $entry->userfile = userfile;
-          $entry->author_name = author_name;
-          $entry->course_id = $COURSE->id;
-          $entry->time_added = time_added;
-          //}
-         */
-
-//$entry->attachments = $draftitemid;
-//$context = context_course::instance($COURSE->id); //$this->page->context;
-//$contextid = $context->id;
-//$component= 'mod_randomstrayquotes';
-//$content = $mform->get_file_content('userfile');
-//$name = $mform->get_new_filename('userfile');
-//$fullpath = "";
-//$override = "";
-//$success = $this->save_file('userfile', $fullpath, $override);
         // Textbox hidden to pass the course_id
         $mform->addElement('hidden', 'courseid', $customdata['courseid']);
         $mform->setType('courseid', PARAM_INT);
