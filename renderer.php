@@ -1,9 +1,9 @@
 <?php
 defined('MOODLE_INTERNAL') || die;
 class mod_randomstrayquotes_renderer extends plugin_renderer_base {
-    
+
     function display_categories($arr_categories){
-    
+
           $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
          foreach ($arr_categories as $category){
                 $catid = $category->id;
@@ -24,7 +24,78 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
          $content .= html_writer::end_tag('table');
          return $content;
     }
-    
+
+    function get_category_name($category_id){
+      global $DB;
+      $querycat = "Select * from {randomstrayquotes_categories} where id= $category_id";
+      $category = $DB->get_record_sql($querycat);
+      $categoryname = $category->category_name;
+
+      return $categoryname;
+    }
+
+    function get_author_name($author_id){
+     global $DB;
+     $queryauthor = "Select * from {randomstrayquotes_authors} where id= $author_id";
+     $author = $DB->get_record_sql($queryauthor);
+     $authorname = $author->author_name;
+
+     return $authorname;
+    }
+
+
+    function format_date_time($datetime_to_format){
+
+    $date = substr($datetime_to_format, 0, 10);
+    $time = substr($datetime_to_format, 11, 4);
+    $hours = substr($time, 0,2);
+    $minutes = substr($time, 2,4);
+    $formateddatetime = $date . ' ' . $hours . ':' . $minutes;
+
+     return $formateddatetime;
+    }
+
+    function display_list_of_quotes($arr_quotes){
+
+      $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
+      foreach ($arr_quotes as $quote){
+        $quoteid = $quote->id;
+        $courseid = $quote->course_id;
+        $userid = $quote->user_id;
+        $categoryid = $this->get_category_name($quote->category_id);
+        $authorpix =  $this->get_image($quote->author_id, $courseid);
+        $authorname = $this->get_author_name($quote->author_id);
+        $timeadded = $this->format_date_time($quote->time_added);
+        $timeupdated = $this->format_date_time($quote->time_updated);
+
+        $content .= html_writer::start_tag('tr', array('class' => 'quote_list'));
+        $content .= html_writer::start_tag('td', array('class' => 'author_list'));
+        $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'headingimage'));
+        $content .= html_writer::empty_tag('br');
+        $content .= html_writer::start_span('quote-display') .  $authorname . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
+        $content .= html_writer::start_span('quote-display') .  $quote->quote . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
+        $content .= html_writer::start_span('quote-display') .  $categoryid . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
+        $content .= html_writer::start_span('quote-display') .  $timeadded . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
+        $content .= html_writer::start_span('quote-display') .  $timeupdated . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'author_list'));
+        $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_quote.php', array('quoteid' => $quote->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::end_tag('tr');
+      }
+      $content .= html_writer::end_tag('table');
+      return $content;
+
+    }
+
     function get_image($authorid, $courseid){
         global $DB, $COURSE;
        // $courseid = 21555;
@@ -40,7 +111,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         $files = array_values($imagePathHash);
        // var_dump($files ); Die();
         // We store the context and the id of the file in an array of parameters that we will pass at the form instanciation
-        $file = $files[0]; 
+        $file = $files[0];
        // echo $file;
        // var_dump($file); die();
         if($file){
@@ -49,9 +120,6 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         }else{
             echo("shit");
         }
-       //  var_dump($filename); die();
-        //$url = moodle_url::make_file_url('/pluginfile.php', $file->get_contextid()."/mod_randomstrayquotes/content/".$file->get_itemid()."/".$filename);
-
         return $url;
     }
 
@@ -59,7 +127,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
            global $COURSE;
        // $arr_authors = [$arr_authors[1]];
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
-         foreach ($arr_authors as $author){      
+         foreach ($arr_authors as $author){
                 //$authorpix =  $author->author_picture;
                 //$courseid = 21555 ; //$author->course_id;
                 $courseid = $author->course_id;
@@ -82,9 +150,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
          }
          $content .= html_writer::end_tag('table');
          return $content;
-       
+
     }
-    
+
     /********************************************************************/
     /*   Display alerts                                                  */
     /********************************************************************/
@@ -103,7 +171,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         $author = $DB->get_record('randomstrayquotes_authors', array('id' => $quoteid), '*', MUST_EXIST);
         return $author;
     }
-    
+
     /********************************************************************/
     /*   Retrieve the author of the associated quote and his picture    */
     /********************************************************************/
@@ -112,8 +180,8 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         $category = $DB->get_record('randomstrayquotes_categories', array('id' => $categoryid), '*', MUST_EXIST);
         return $category;
     }
-    
-    
+
+
     function display_quotes($arr_quotes, $DB){
         global $COURSE, $USER;
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
@@ -138,10 +206,10 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
                 $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_/quotes.php', array('quoteid' => $quoteid, 'courseid' => $COURSE->id, 'userid' => $USER->id)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
                 $content .= html_writer::end_tag('td');
                 $content .= html_writer::end_tag('tr');
-               
+
          }
          $content .= html_writer::end_tag('table');
          return $content;
-    } 
-    
+    }
+
 }
