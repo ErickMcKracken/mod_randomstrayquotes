@@ -19,6 +19,10 @@ $form = new \mod_randomstrayquotes\forms\addCategories();
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Add a Category');
 
+if ($form->is_cancelled()) {
+    redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
+}
+
 if ($data = $form->get_data()) {
     $category = new stdClass();
     $category->category_name = $data->category_name;

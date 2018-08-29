@@ -33,7 +33,7 @@ $mform->setType('course_id', PARAM_INT);
 $buttonarray = array();
 $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
 $buttonarray[] = & $mform->createElement('cancel');
-$buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
+//$buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
 $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
      }

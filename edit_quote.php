@@ -36,6 +36,21 @@ if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_quotes.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
+if (isset($_REQUEST['delete'])) {
+  try{
+      $transaction = $DB->start_delegated_transaction();
+      $table = 'randomstrayquotes_quotes';
+      $DB->delete_records($table, array('id' => $quote_id));
+      $url= new moodle_url('/mod/randomstrayquotes/list_quotes.php', array('id' => $courseid));
+      $transaction->allow_commit();
+      }
+       catch (\Exception $e) {
+             $transaction->rollback($e);
+             $url= new moodle_url('/mod/randomstrayquotes/edit_quote.php', array('id' => $courseid, 'status' =>'error'));
+             redirect($url, 'Some error have occured', 3);
+      }
+      redirect($url, 'Transaction successful', 3);
+}
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Edit a quote');

@@ -108,7 +108,6 @@ class editQuote extends \moodleform {
         $mform->setDefault('quote_id', $quote->id);
         $mform->setType('quote_id', PARAM_INT);
 
-
         // Indicate the courseid
         $mform->addElement('hidden', 'course_id');
         $mform->setDefault('course_id', $quote->course_id);
@@ -125,8 +124,8 @@ class editQuote extends \moodleform {
         // Put an array of buttons on the form
         $buttonarray = array();
         $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-        $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('cancel'));
-        $buttonarray[] =& $mform->createElement('submit', 'delete', get_string('delete'), array('class'=> 'btn btn-danger', 'value'=> 'delete'));
+        $buttonarray[] = & $mform->createElement('cancel');
+        $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class'=> 'btn btn-danger', 'value'=> 'delete'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
      }

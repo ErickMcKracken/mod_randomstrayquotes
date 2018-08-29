@@ -21,7 +21,7 @@ $customdata['authorid'] = required_param('authorid', PARAM_INT);
 // We define the context
 $ctx = context_course::instance($course_id);
 
-// We recuperate the picture already associated to the author 
+// We recuperate the picture already associated to the author
 $imageid = $DB->get_record('randomstrayquotes_authors', ['id' => $customdata['authorid']], 'author_picture');
 
 // We setup the file storage area
@@ -31,7 +31,7 @@ $imagePathHash = $fs->get_area_files($ctx->id, 'mod_randomstrayquotes', 'content
 // We obtain the id of the picture file already present for the author using the imagePathHash
 $files = array_values($imagePathHash);
 // We store the context and the id of the file in an array of parameters that we will pass at the form instanciation
-$customdata['photofile'] = $files[0]; 
+$customdata['photofile'] = $files[0];
 $customdata['ctx'] = $ctx;
 // Instanciation of the form
 $form = new \mod_randomstrayquotes\forms\editAuthor(null, $customdata);
@@ -41,6 +41,23 @@ $maxbytes = '50000';
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/add_authors.php', ['courseid' => $course_id,  'userid' => $USER->id ]));
 }
+
+if (isset($_REQUEST['delete'])) {
+  try{
+      $transaction = $DB->start_delegated_transaction();
+      $table = 'randomstrayquotes_authors';
+      $DB->delete_records($table, array('id' => $authorid));
+      $url= new moodle_url('/mod/randomstrayquotes/add_authors.php', array('id' => $courseid));
+      $transaction->allow_commit();
+      }
+       catch (\Exception $e) {
+             $transaction->rollback($e);
+             $url= new moodle_url('/mod/randomstrayquotes/edit_author.php', array('id' => $courseid, 'status' =>'error'));
+             redirect($url, 'Some error have occured', 3);
+      }
+      redirect($url, 'Transaction successful', 3);
+}
+
 // Creation of the page
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Edit an author\'s informations');

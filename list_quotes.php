@@ -18,7 +18,7 @@ if ($quotes_arr) {
     $renderer = $PAGE->get_renderer('mod_randomstrayquotes');
     $content = $renderer->display_list_of_quotes($quotes_arr);
 } else {
-    $content = 'Aucuns auteurs n\'ont été saisies pour le moment';
+    $content = 'Aucunes citations n\'ont été saisies pour le moment';
 }
 echo ($content);
 echo $OUTPUT->footer();

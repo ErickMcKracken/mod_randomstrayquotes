@@ -12,8 +12,9 @@ $PAGE->set_title('Edit Categories');
 $PAGE->set_heading('Form Edit Categories');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/edit_category.php');
 
-$category_id = 1; //required_param('catid', PARAM_INT);
-$courseid = 21155; //required_param('courseid', PARAM_INT);
+//$delete = optional_param('delete', array() ,PARAM_INT);
+$category_id = required_param('catid', PARAM_INT);
+$courseid = 21155;  //$COURSE->id; //21155; //required_param('courseid', PARAM_INT);
 
 // We define the context
 $ctx = context_course::instance($courseid);
@@ -29,9 +30,24 @@ if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
+if (isset($_REQUEST['delete'])) {
+  try{
+      $transaction = $DB->start_delegated_transaction();
+      $table = 'randomstrayquotes_categories';
+      $DB->delete_records($table, array('id' => $category_id));
+      $url= new moodle_url('/mod/randomstrayquotes/add_categories.php', array('id' => $courseid));
+      #$url=  $CFG->wwwroot.'/course/view.php', array('id'=>$courseid);
+      $transaction->allow_commit();
+      }
+       catch (\Exception $e) {
+             $transaction->rollback($e);
+             $url= new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('id' => $courseid, 'status' =>'error'));
+             redirect($url, 'Some error have occured', 3);
+      }
+      redirect($url, 'Transaction successful', 3);
+}
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Edit a category');
-
 
 if ($data = $form->get_data()) {
     $category = new stdClass();
@@ -51,5 +67,3 @@ if ($data = $form->get_data()) {
 
 echo $form->display();
 echo $OUTPUT->footer();
-
-?>

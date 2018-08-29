@@ -30,7 +30,7 @@ $mform->addRule('category_name', null, 'required', null, 'client');
 $mform->setDefault('category_name', $category->category_name);
 $mform->setType('category_name', PARAM_TEXT);
 
-// Indicate the user_id
+// Indicate the category_id
 $mform->addElement('hidden', 'category_id');
 $mform->setDefault('category_id', $category->id);
 $mform->setType('category_id', PARAM_INT);
@@ -54,7 +54,5 @@ $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
      }
 
-     public function delete_category($DB, $catid){
-         null;
-     }
+
 }

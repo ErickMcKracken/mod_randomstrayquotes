@@ -30,7 +30,7 @@ $customdata['ctx'] = $ctx;
 $form = new \mod_randomstrayquotes\forms\addQuotes(null, $customdata);
 
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/mod/randomstrayquotes/view.php', ['courseid' => $course_id, 'userid' => $USER->id]));
+    redirect(new moodle_url('/course/view.php', ['id' => $course_id, 'userid' => $USER->id]));
 }
 
 echo $OUTPUT->header();
