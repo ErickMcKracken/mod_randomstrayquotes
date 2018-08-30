@@ -12,9 +12,19 @@ $PAGE->set_title('Edit Categories');
 $PAGE->set_heading('Form Edit Categories');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/edit_category.php');
 
-//$delete = optional_param('delete', array() ,PARAM_INT);
-$category_id = required_param('catid', PARAM_INT);
-$courseid = 21155;  //$COURSE->id; //21155; //required_param('courseid', PARAM_INT);
+if (isset($_GET['catid'])){
+   $category_id = required_param('catid', PARAM_INT);
+ }else{
+   $category_id = $_POST['category_id'];
+}
+
+if (isset($_GET['courseid'])){
+  $courseid = required_param('courseid', PARAM_INT);
+}else{
+  $courseid = $_POST['course_id'];
+}
+
+
 
 // We define the context
 $ctx = context_course::instance($courseid);
@@ -41,13 +51,11 @@ if (isset($_REQUEST['delete'])) {
       }
        catch (\Exception $e) {
              $transaction->rollback($e);
-             $url= new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('id' => $courseid, 'status' =>'error'));
+             $url= new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('id' => $courseid, 'status' =>'error', 'catid' => $category_id ));
              redirect($url, 'Some error have occured', 3);
       }
       redirect($url, 'Transaction successful', 3);
 }
-echo $OUTPUT->header();
-echo $OUTPUT->heading('Edit a category');
 
 if ($data = $form->get_data()) {
     $category = new stdClass();
@@ -60,10 +68,10 @@ if ($data = $form->get_data()) {
     $DB->update_record('randomstrayquotes_categories', $category, $returnid = true, $bulk = false);
     $data = NULL;
   // $form = NULL;
-    //redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php');
+  //  redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php', array('id' => $courseid, 'catid' => $category_id));
+    redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php', ['courseid' => $courseid,  'userid' => $USER->id, 'catid' => $category_id ]));
 }
-
-
-
+echo $OUTPUT->header();
+echo $OUTPUT->heading('Edit a category');
 echo $form->display();
 echo $OUTPUT->footer();

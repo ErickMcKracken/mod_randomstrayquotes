@@ -72,3 +72,4 @@ $string['course_id'] = 'Numéro de cours';
 $string['randomstrayquotes:view'] = 'Vue';
 $string['randomstrayquotes:submit'] = 'Soumettre';
 $string['randomstrayquotes:addinstance']  = 'Add Instance';
+$string['backtolist']  = 'Back to the List';

@@ -11,14 +11,23 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title('Edit Quote');
 $PAGE->set_heading('Form Edit Quote');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/edit_quote.php');
+/*
+echo('<pre>');
+var_dump($_POST);
+echo('</pre>');
+*/
+//We recuperate the parameters in the adress bar or the form submission according to the case
+if (isset($_GET['quoteid'])){
+   $quoteid = required_param('quoteid', PARAM_INT);
+ }else{
+   $quoteid = $_POST['quote_id'];
+}
 
-//We recuperae the parameters in the adress bar
-$courseid  = required_param('courseid', PARAM_INT);
-$quoteid = required_param('quoteid', PARAM_INT);
-
-$courseid = 21155;
-$quoteid = 6;
-//var_dump("$courseid"); die;
+if (isset($_GET['courseid'])){
+  $courseid = required_param('courseid', PARAM_INT);
+}else{
+  $courseid = $_POST['course_id'];
+}
 
 // We define the context
 $ctx = context_course::instance($courseid);
@@ -27,7 +36,6 @@ $customdata['ctx'] = $ctx;
 $customdata['quoteid'] = $quoteid ;
 // We catch the course id in the parameter in the adress bar
 $customdata['courseid'] = $courseid;
-//var_dump($customdata); die;
 
 // Instaciation of the form
 $form = new \mod_randomstrayquotes\forms\editQuote(null, $customdata);
@@ -36,11 +44,15 @@ if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_quotes.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
+if (isset($_REQUEST['backtolist'])) {
+    redirect(new moodle_url('/mod/randomstrayquotes/list_quotes.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
+}
+
 if (isset($_REQUEST['delete'])) {
   try{
       $transaction = $DB->start_delegated_transaction();
       $table = 'randomstrayquotes_quotes';
-      $DB->delete_records($table, array('id' => $quote_id));
+      $DB->delete_records($table, array('id' => $_POST['quote_id']));
       $url= new moodle_url('/mod/randomstrayquotes/list_quotes.php', array('id' => $courseid));
       $transaction->allow_commit();
       }
@@ -52,10 +64,6 @@ if (isset($_REQUEST['delete'])) {
       redirect($url, 'Transaction successful', 3);
 }
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading('Edit a quote');
-
-
 if ($data = $form->get_data()) {
     $quote = new stdClass();
     $quote->id = $data->quote_id;
@@ -65,14 +73,14 @@ if ($data = $form->get_data()) {
     $quote->source = $data->source;
     $quote->time_updated = $data->time_updated;
     $quote->user_id = $USER->id;
-    $quote->visible = 1 ; //$data->$visible;
+    $quote->visible = $_POST['visible'];//$data->$visible;
 
     // We insert the quote
     $DB->update_record('randomstrayquotes_quotes', $quote);
     $data = NULL;
-    //$form = NULL;
     redirect(new moodle_url('/mod/randomstrayquotes/edit_quote.php', ['courseid' => $courseid, 'quoteid' => $quoteid, 'userid' => $USER->id]));
 }
-
+echo $OUTPUT->header();
+echo $OUTPUT->heading('Edit a quote');
 echo $form->display();
 echo $OUTPUT->footer();

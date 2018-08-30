@@ -14,12 +14,25 @@ $PAGE->set_heading('Form Edit Authors');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/edit_author.php');
 
 // We catch the course id in the parameter in the adress bar
-$course_id = required_param('courseid', PARAM_INT);
+//$course_id = required_param('courseid', PARAM_INT);
+
+if (isset($_GET['authorid'])){
+   $category_id = required_param('authorid', PARAM_INT);
+ }else{
+   $category_id = $_POST['authorid'];
+}
+
+if (isset($_GET['courseid'])){
+  $courseid = required_param('courseid', PARAM_INT);
+}else{
+  $courseid = $_POST['courseid'];
+}
+
 // We catch the authorid and put in an array the we will pass to the form at instanciation
 $customdata['authorid'] = required_param('authorid', PARAM_INT);
 
 // We define the context
-$ctx = context_course::instance($course_id);
+$ctx = context_course::instance($courseid);
 
 // We recuperate the picture already associated to the author
 $imageid = $DB->get_record('randomstrayquotes_authors', ['id' => $customdata['authorid']], 'author_picture');
@@ -39,15 +52,15 @@ $form = new \mod_randomstrayquotes\forms\editAuthor(null, $customdata);
 $maxbytes = '50000';
 // if the form is canceled we retur to the addAuthor form
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/mod/randomstrayquotes/add_authors.php', ['courseid' => $course_id,  'userid' => $USER->id ]));
+    redirect(new moodle_url('/mod/randomstrayquotes/list_authors.php', ['courseid' => $course_id,  'userid' => $USER->id ]));
 }
 
 if (isset($_REQUEST['delete'])) {
   try{
       $transaction = $DB->start_delegated_transaction();
       $table = 'randomstrayquotes_authors';
-      $DB->delete_records($table, array('id' => $authorid));
-      $url= new moodle_url('/mod/randomstrayquotes/add_authors.php', array('id' => $courseid));
+      $DB->delete_records($table, array('id' => $_POST['authorid']));
+      $url= new moodle_url('/mod/randomstrayquotes/list_authors.php', array('id' => $courseid));
       $transaction->allow_commit();
       }
        catch (\Exception $e) {

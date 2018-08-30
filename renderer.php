@@ -33,8 +33,12 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
       global $DB;
       $querycat = "Select * from {randomstrayquotes_categories} where id= $category_id";
       $category = $DB->get_record_sql($querycat);
-      $categoryname = $category->category_name;
-
+      //var_dump($category); die;
+        if($category == false){
+          $categoryname = 'category destroyed';
+        }else{
+          $categoryname = $category->category_name;
+        }
       return $categoryname;
     }
 
@@ -42,21 +46,26 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
      global $DB;
      $queryauthor = "Select * from {randomstrayquotes_authors} where id= $author_id";
      $author = $DB->get_record_sql($queryauthor);
-     $authorname = $author->author_name;
+
+     if ($author == false){
+       $authorname = "Author destroyed";
+     }else{
+        $authorname = $author->author_name;
+     }
+
 
      return $authorname;
     }
 
-
     function format_date_time($datetime_to_format){
 
-    $date = substr($datetime_to_format, 0, 10);
-    $time = substr($datetime_to_format, 11, 4);
-    $hours = substr($time, 0,2);
-    $minutes = substr($time, 2,4);
-    $formateddatetime = $date . ' ' . $hours . ':' . $minutes;
+      $date = substr($datetime_to_format, 0, 10);
+      $time = substr($datetime_to_format, 11, 4);
+      $hours = substr($time, 0,2);
+      $minutes = substr($time, 2,4);
+      $formateddatetime = $date . ' ' . $hours . ':' . $minutes;
 
-     return $formateddatetime;
+       return $formateddatetime;
     }
 
     function display_list_of_quotes($arr_quotes){
@@ -66,7 +75,8 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         $quoteid = $quote->id;
         $courseid = $quote->course_id;
         $userid = $quote->user_id;
-        $categoryid = $this->get_category_name($quote->category_id);
+        $categoryid = $quote->category_id;
+        $categoryname = $this->get_category_name($categoryid);
         $authorpix =  $this->get_image($quote->author_id, $courseid);
         $authorname = $this->get_author_name($quote->author_id);
         $timeadded = $this->format_date_time($quote->time_added);
@@ -82,7 +92,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         $content .= html_writer::start_span('quote-display') .  $quote->quote . html_writer::end_span();
         $content .= html_writer::end_tag('td');
         $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
-        $content .= html_writer::start_span('quote-display') .  $categoryid . html_writer::end_span();
+        $content .= html_writer::start_span('quote-display') .  $categoryname . html_writer::end_span();
         $content .= html_writer::end_tag('td');
         $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
         $content .= html_writer::start_span('quote-display') .  $timeadded . html_writer::end_span();

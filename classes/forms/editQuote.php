@@ -16,19 +16,6 @@ class editQuote extends \moodleform {
         global $PAGE, $DB, $CFG;
         $mform = $this->_form;
 
-        /*
-        required_param('delete', INT) = 'error' {
-
-                    $renderer = $PAGE->get_renderer('mod_randomstrayquotes');
-                    $content = $renderer->display_quotes($quotes_arr,$DB, $COURSE, $USER);
-                   // echo ($author->author_name);
-                } else {
-                    $content = 'Aucuns auteurs n\'ont été saisis pour le moment';
-                }
-
-                echo ($content);
-        */
-         // Query to retrieve the quote to edit
          // Array of parameters passed through the instanciation of the form
          $customdata = $this->_customdata;
 
@@ -95,8 +82,10 @@ class editQuote extends \moodleform {
         $radioarray=array();
         $radioarray[] = $mform->createElement('radio', 'visible', '', get_string('yes', 'mod_randomstrayquotes'), 1, $attributesbtn);
         $radioarray[] = $mform->createElement('radio', 'visible', '', get_string('no', 'mod_randomstrayquotes'), 0, $attributesbtn);
+        $mform->setType('visible', PARAM_INT);
         $mform->setDefault('visible', $quote->visible);
         $mform->addGroup($radioarray, 'radioar', get_string('visible', 'mod_randomstrayquotes'), array(' '), false);
+
 
         // Indicate the user_id
         $mform->addElement('hidden', 'user_id');
@@ -126,30 +115,8 @@ class editQuote extends \moodleform {
         $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = & $mform->createElement('cancel');
         $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class'=> 'btn btn-danger', 'value'=> 'delete'));
+        $buttonarray[] = & $mform->createElement('submit', 'backtolist', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'backtolist'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
      }
-   /*
-     public function delete_quote($DB, $quoteid, $courseid){
-
-         if (isset(required_param('delete', INT))){
-            try{
-                $transaction = $DB->start_delegated_transaction();
-                $table = 'randomstrayquotes_quotes';
-                $DB->delete_records($table, array('id' => $quoteid));
-                $url= new moodle_url('/mod/randomstrayquotes/view.php', array('id' => $courseid));
-                #$url=  $CFG->wwwroot.'/course/view.php', array('id'=>$courseid);
-                $transaction->allow_commit();
-                }
-                 catch (\Exception $e) {
-                       $transaction->rollback($e);
-                       $url= new moodle_url('/mod/randomstrayquotes/edit_quote.php', array('id' => $courseid, 'status' =>'error'));
-                       redirect($url, 'Some error have occured', 3);
-                }
-                redirect($url, 'Transaction successful', 3);
-
-             }
-*/
-
-
 }
