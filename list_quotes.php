@@ -10,7 +10,7 @@ $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/list_quotes.php');
 echo $OUTPUT->header();
 defined('MOODLE_INTERNAL') || die();
 
-$course_id = 21155;
+$course_id =  required_param('courseid', PARAM_INT);
 $quotesquery = "Select * from {randomstrayquotes_quotes} where course_id = $course_id";
 $quotes_arr = $DB->get_records_sql($quotesquery);
 

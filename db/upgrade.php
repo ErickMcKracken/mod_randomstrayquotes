@@ -24,8 +24,8 @@
  * it cannot do itself, it will tell you what you need to do.  The commands in
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
- * @package    mod_newmodule
- * @copyright  2016 Your Name <your@email.address>
+ * @package    mod_randomstrayquotes
+ * @copyright  2018 Eric Frenette <frenette.eric@uqam.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -39,5 +39,38 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_randomstrayquotes_upgrade($oldversion) {
     global $DB;
+
+ $dbman = $DB->get_manager();
+  if (oldversion < 2018083114) {
+    //define the fields to be added to randomstrayquotes_authors
+     $table = new xmldb_table('randomstrayquotes_authors');
+     $fields = [
+       new xmldb_field('time_added', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
+       new xmldb_field('time_updated', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
+       new xmldb_field('user_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null)
+     ];
+
+     foreach ($fields as $field) {
+       if (!$dbman->field_exists($table, $field)){
+         $dbman->add_field($table, $field);
+       }
+     }
+
+     //define the fields to be added to randomstrayquotes_categories
+      $table = new xmldb_table('randomstrayquotes_categories');
+      $fields = [
+        new xmldb_field('time_added', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
+        new xmldb_field('time_updated', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
+        new xmldb_field('user_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null)
+      ];
+
+      foreach ($fields as $field) {
+        if (!$dbman->field_exists($table, $field)){
+          $dbman->add_field($table, $field);
+        }
+      }
+      upgrade_mod_savepoint(true, 2018083114, 'randomstrayquotes');
+  }
+
     return true;
 }

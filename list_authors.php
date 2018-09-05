@@ -10,7 +10,7 @@ $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/list_authors.php');
 echo $OUTPUT->header();
 defined('MOODLE_INTERNAL') || die();
 
-$course_id = 21155;
+$course_id =  required_param('courseid', PARAM_INT);
 $authorsquery = "Select * from {randomstrayquotes_authors} where course_id = $course_id";
 $authors_arr = $DB->get_records_sql($authorsquery);
 

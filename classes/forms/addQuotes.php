@@ -83,11 +83,16 @@ class addQuotes extends \moodleform {
         $mform->addElement('hidden', 'time_added', "$time");
         $mform->setType('time_added', PARAM_ALPHANUMEXT);
 
+        // Textbox hidden to pass  the courseid
+        $mform->addElement('hidden', 'course_id', "$courseid");
+        $mform->setType('course_id', PARAM_ALPHANUMEXT);
+
         // Put an array of buttons on the form
         $buttonarray = array();
         $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = & $mform->createElement('cancel');
-      //  $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
+      //  $buttonarray[] = & $mform->createElement('submit', 'addcategories', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'addcategories'));
+      //  $buttonarray[] = & $mform->createElement('submit', 'addauthors', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'addauthors'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
 

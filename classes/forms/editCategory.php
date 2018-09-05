@@ -50,6 +50,7 @@ $buttonarray = array();
 $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
 $buttonarray[] = & $mform->createElement('cancel');
 $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
+$buttonarray[] = & $mform->createElement('submit', 'backtolist', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'backtolist'));
 $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
      }

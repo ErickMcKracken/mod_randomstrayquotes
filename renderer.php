@@ -71,6 +71,26 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     function display_list_of_quotes($arr_quotes){
 
       $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
+      $content .= html_writer::start_tag('tr', array('class' => 'author_list_header_row'));
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Author' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Quote' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Category' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Added' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Updated' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::end_tag('td');
       foreach ($arr_quotes as $quote){
         $quoteid = $quote->id;
         $courseid = $quote->course_id;
@@ -113,14 +133,28 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     function display_list_of_authors($arr_authors){
 
       $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
+      $content .= html_writer::start_tag('tr', array('class' => 'author_list_header_row'));
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Author Name' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Time Added' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Time Updated' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::end_tag('td');
       foreach ($arr_authors as $author){
         $authorid = $author->id;
         $courseid = $author->course_id;
         $userid = $author->user_id;
         $authorpix =  $this->get_image($author->id, $courseid);
         $authorname = $this->get_author_name($author->id);
-      //  $timeadded = $this->format_date_time($quote->time_added);
-      //  $timeupdated = $this->format_date_time($quote->time_updated);
+        $timeadded = $this->format_date_time($author->time_added);
+        $timeupdated = $this->format_date_time($author->time_updated);
 
         $content .= html_writer::start_tag('tr', array('class' => 'author_list'));
         $content .= html_writer::start_tag('td', array('class' => 'author_list'));
@@ -128,12 +162,12 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         $content .= html_writer::empty_tag('br');
         $content .= html_writer::start_span('author-display') .  $authorname . html_writer::end_span();
         $content .= html_writer::end_tag('td');
-      //  $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
-      //  $content .= html_writer::start_span('author-display') .  $timeadded . html_writer::end_span();
-      //  $content .= html_writer::end_tag('td');
-      //  $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
-      //  $content .= html_writer::start_span('author-display') .  $timeupdated . html_writer::end_span();
-      //  $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
+        $content .= html_writer::start_span('author-display') .  $timeadded . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
+        $content .= html_writer::start_span('author-display') .  $timeupdated . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
         $content .= html_writer::start_tag('td', array('class' => 'author_list'));
         $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_author.php', array('authorid' => $author->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
         $content .= html_writer::end_tag('td');
@@ -147,24 +181,38 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     function display_list_of_categories($arr_categories){
 
       $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
+      $content .= html_writer::start_tag('tr', array('class' => 'author_list_header_row'));
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Category Name' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Time Added' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Time Updated' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::end_tag('td');
       foreach ($arr_categories as $category){
         $categoryid = $category->id;
         $courseid = $category->course_id;
         $userid = $category->user_id;
         $categoryname = $category->category_name;
-      //  $timeadded = $this->format_date_time($category->time_added);
-      //  $timeupdated = $this->format_date_time($category->time_updated);
+        $timeadded = $this->format_date_time($category->time_added);
+        $timeupdated = $this->format_date_time($category->time_updated);
 
         $content .= html_writer::start_tag('tr', array('class' => 'category_list'));
         $content .= html_writer::start_tag('td', array('class' => 'category_list'));
         $content .= html_writer::start_span('category-display') .  $categoryname . html_writer::end_span();
         $content .= html_writer::end_tag('td');
-      //  $content .= html_writer::start_tag('td', array('class' => 'category_list'));
-      //  $content .= html_writer::start_span('category-display') .  $timeadded . html_writer::end_span();
-      //  $content .= html_writer::end_tag('td');
-      //  $content .= html_writer::start_tag('td', array('class' => 'category_list'));
-      //  $content .= html_writer::start_span('category-display') .  $timeupdated . html_writer::end_span();
-      //  $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'category_list'));
+        $content .= html_writer::start_span('category-display') .  $timeadded . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'category_list'));
+        $content .= html_writer::start_span('category-display') .  $timeupdated . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
         $content .= html_writer::start_tag('td', array('class' => 'category_list'));
         $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('catid' => $category->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
         $content .= html_writer::end_tag('td');

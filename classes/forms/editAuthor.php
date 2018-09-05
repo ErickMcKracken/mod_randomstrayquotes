@@ -15,17 +15,17 @@ class editAuthor extends \moodleform {
     protected function definition() {
         global $PAGE, $DB;
         $mform = $this->_form;
-        
+
         // Array of parameters passed through the instanciation of the form
         $customdata = $this->_customdata;
-        
+
         // Recuperate the author id via the Array of parameters passed through the instanciation of the form
         $authorid = $customdata['authorid'];
-        
+
         //Query to fill the fields
         $queryauth = "Select distinct * from {randomstrayquotes_authors} where id = $authorid";
         $author = $DB->get_record_sql($queryauth);
-        
+
         // Texbox to edit an author
         $attributes = array('size' => '50', 'maxlength' => '100');
         $mform->addElement('text', 'author_name', get_string('author_name', 'mod_randomstrayquotes'), $attributes);
@@ -33,7 +33,7 @@ class editAuthor extends \moodleform {
         $mform->setDefault('author_name', $author->author_name);
         $mform->setType('author_name', PARAM_TEXT);
 
-        // Instanciation of the entry object 
+        // Instanciation of the entry object
         $entry = new \stdClass;
         // Recuperate the file id of the picture already present via the Array of parameters passed through the instanciation of the form
         $entry->id = $customdata['photofile']->get_itemid();
@@ -43,11 +43,11 @@ class editAuthor extends \moodleform {
         $maxbytes = '50000';
         // Setup the draft area and make it ready for upload
         file_prepare_draft_area(
-                $draftitemid, 
-                $customdata['ctx']->id, 
-                'mod_randomstrayquotes', 
-                'content', 
-                $entry->id, 
+                $draftitemid,
+                $customdata['ctx']->id,
+                'mod_randomstrayquotes',
+                'content',
+                $entry->id,
                 array('subdirs' => 0, 'maxbytes' => $maxbytes, 'maxfiles' => 50)
                 );
         $entry->userfile = $draftitemid;
@@ -74,22 +74,23 @@ class editAuthor extends \moodleform {
         // Textbox hidden to pass the course_id
         $mform->addElement('hidden', 'courseid', "$author->course_id");
         $mform->setType('courseid', PARAM_INT);
-        
+
         // We format the date and time of the update
         $date = new \DateTime("now");
         $time = $date->format('Y-m-d_H.i');
-        
+
         // Textbox hidden to pass  the date of the update
         $mform->addElement('hidden', 'time_added', "$time");
         $mform->setType('time_added', PARAM_ALPHANUMEXT);
-        
+
         // Display an array of buttons on the form
         $buttonarray = array();
         $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = & $mform->createElement('cancel');
         $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
+        $buttonarray[] = & $mform->createElement('submit', 'backtolist', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'backtolist'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-        
+
         // ??
         $this->set_data($entry);
     }
