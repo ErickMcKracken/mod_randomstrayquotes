@@ -13,10 +13,13 @@ class addQuotes extends \moodleform {
     protected function definition() {
         global $PAGE, $DB, $CFG;
         $mform = $this->_form;
-        $courseid = 21155;
+        //$courseid = 21155;
 
         // Array of parameters passed through the instanciation of the form
         $customdata = $this->_customdata;
+        $courseid =  $customdata['courseid'];
+        $userid = $customdata['userid'];
+        $ctx = $customdata['ctx'];
 
         // Combobox with the authors
         $selectAuth= array();
@@ -30,6 +33,7 @@ class addQuotes extends \moodleform {
             $selectAuth[$key] = $value;
         }
         $mform->addElement('select', 'author', get_string('author_name', 'mod_randomstrayquotes'), $selectAuth);
+        //$mform->setDefault('author', $author->id);
         $mform->setType('id', PARAM_INT);
 
         // Combobox with categories
@@ -45,10 +49,9 @@ class addQuotes extends \moodleform {
         }
 
         $mform->addElement('select', 'category', get_string('category', 'mod_randomstrayquotes'),$selectArray);
-      //$mform->setDefault('config_category',  $category['selected']);
-        $mform->setDefault('category', 0);
+      //  $mform->setDefault('category',  $category['selected']);
+        //$mform->setDefault('category', 0)
         $mform->setType('category', PARAM_INT);
-
 
           // Add the quote
         $mform->addElement('textarea', 'quote', get_string('quote', 'mod_randomstrayquotes'), 'wrap="virtual" rows="6" cols="85"');
@@ -72,8 +75,8 @@ class addQuotes extends \moodleform {
         $mform->setType('visible', PARAM_INT);
 
         // Indicate the username
-        $mform->addElement('hidden', 'username');
-        $mform->setType('username', PARAM_TEXT);
+        $mform->addElement('hidden', 'user_id', "$userid");
+        $mform->setType('user_id', PARAM_TEXT);
 
         // We format the date and time of the update
         $date = new \DateTime("now");

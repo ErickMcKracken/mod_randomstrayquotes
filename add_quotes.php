@@ -12,14 +12,23 @@ $PAGE->set_title('Add Quotes');
 $PAGE->set_heading('Form Add Quote');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/add_quotes.php');
 
-//$form = new \mod_randomstrayquotes\forms\addQuotes();
 // We catch the course id in the parameter in the adress bar and pass it to the form
-//$course_id = required_param('courseid', PARAM_INT);
-$course_id = 21155;
-//var_dump($course_id); die;
+
+if (isset($_GET['courseid'])){
+  $course_id = required_param('courseid', PARAM_INT);
+}else{
+  $course_id = $_POST['course_id'];
+}
+
+if (isset($_GET['userid'])){
+  $user_id = required_param('userid', PARAM_INT);
+}else{
+  $user_id = $_POST['user_id'];
+}
 
 // We define the context and pass it to the form
 $ctx = context_course::instance($course_id);
+$customdata['userid'] = $user_id;
 $customdata['courseid'] = $course_id;
 $customdata['ctx'] = $ctx;
 
@@ -31,26 +40,40 @@ if ($form->is_cancelled()) {
 }
 
 if ($data = $form->get_data()) {
-  /*
+
+  try{
+      $transaction = $DB->start_delegated_transaction();
+      $table = 'randomstrayquotes_quotes';
+      $quote = new stdClass();
+      $quote->quote = $data->quote;
+      $quote->author_id = $data->author;
+      $quote->quote = $data->quote;
+      $quote->category_id = $data->category;
+      $quote->source = $data->source;
+      $quote->time_added = $data->time_added;
+      $quote->user_id = $data->user_id;
+      $quote->course_id = $data->course_id;
+      $quote->visible = $_POST['visible'];//$data->$visible;
+
+      // We insert the quote
+      $DB->insert_record('randomstrayquotes_quotes', $quote, $returnid = true, $bulk = false);
+      $data = NULL;
+      $url= new moodle_url('/mod/randomstrayquotes/add_quotes.php', array('courseid' => $course_id, 'userid' => $user_id));
+      $transaction->allow_commit();
+      }
+       catch (\Exception $e) {
+             $transaction->rollback($e);
+             $url= new moodle_url('/mod/randomstrayquotes/add_quotes.php', array('id' => $course_id, 'userid' => $user_id, 'status' =>'error'));
+             redirect($url, 'Some error have occured', 3);
+      }
+      redirect($url, 'Transaction successful', 3);
+
+/*
   echo('<pre>');
-  var_dump($_POST); die;
+  var_dump($data); die;
 echo('<pre>');
 */
-    $quote = new stdClass();
-    $quote->author_id = $_POST['author']; //$data->author_id;
-    $quote->quote = $data->quote;
-    $quote->category = $data->category;
-    $quote->source = $data->source;
-    $quote->course_id = $data->course_id;
-    $quote->time_added = $data->time_added;
-    $quote->user_id = $USER->id;
-    $quote->visible = $_POST['visible']; //$data->$visible;
 
-    // We insert the quote
-    $DB->insert_record('randomstrayquotes_quotes', $quote, $returnid = true, $bulk = false);
-    $data = NULL;
-  //  $form = NULL;
-    redirect(new moodle_url('/mod/randomstrayquotes/add_quotes.php', ['courseid' => $course_id, 'userid' => $USER->id]));
 }
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Add a Quote');

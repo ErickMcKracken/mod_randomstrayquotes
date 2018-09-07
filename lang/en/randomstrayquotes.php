@@ -48,7 +48,6 @@ $string['author_picture'] = 'Autor picture';
 $string['course_id'] = 'Course id';
 $string['Addauthors'] = 'Add authors';
 $string['Edit'] = 'Edit';
-$string['Addauthors'] = 'Add authors';
 $string['Addcategories'] = 'Add categories';
 $string['Addquotes'] = 'Add quotes';
 $string['quotes'] = 'quotes';

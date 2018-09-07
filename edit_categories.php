@@ -38,7 +38,7 @@ if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
-if (isset($_REQUEST['backtolist'])) {
+if (isset($_POST['backtolist'])) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 

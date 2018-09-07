@@ -40,10 +40,6 @@ if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_quotes.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
-if (isset($_REQUEST['backtolist'])) {
-    redirect(new moodle_url('/mod/randomstrayquotes/list_quotes.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
-}
-
 if (isset($_REQUEST['delete'])) {
   try{
       $transaction = $DB->start_delegated_transaction();

@@ -1,5 +1,4 @@
 <?php
-
 //require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once('../../config.php');
 //require_once ($CFG->dirroot.'/lib/formslib.php');
@@ -15,7 +14,6 @@ $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/add_categories.php');
 
 $courseid = $COURSE->id;
 
-
 // We define the context
 $ctx = context_course::instance($courseid);
 // We pass custom data in parameter
@@ -24,8 +22,6 @@ $customdata['ctx'] = $ctx;
 $customdata['courseid'] = $courseid;
 
 $form = new \mod_randomstrayquotes\forms\addCategories();
-
-
 
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
@@ -72,7 +68,7 @@ if ($data = $form->get_data()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Add a Category');
-    echo $form->display();
+echo $form->display();
 //Quotes Listing
 
         $catquery = "Select * from {randomstrayquotes_categories}";
