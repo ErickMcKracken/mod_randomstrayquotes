@@ -25,7 +25,7 @@ $customdata['ctx'] = $ctx;
 $form = new \mod_randomstrayquotes\forms\addAuthors(null, $customdata);
 
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/mod/randomstrayquotes/view.php', ['courseid' => $course_id, 'userid' => $USER->id]));
+    redirect(new moodle_url('/mod/randomstrayquotes/list_authors.php', ['courseid' => $course_id, 'userid' => $USER->id]));
 }
 
 $maxbytes = 5000;
@@ -60,29 +60,6 @@ if ($data = $form->get_data()) {
              redirect($url, 'Some error have occured', 3);
       }
       redirect($url, 'Transaction successful', 3);
-
-
-
-/*
-    // ... store or update $entry
-    file_save_draft_area_files($data->userfile, $ctx->id, 'mod_randomstrayquotes', 'content', $data->userfile, array('subdirs' => 0, 'maxbytes' => $maxbytes, 'maxfiles' => 50));
-
-    $author = new stdClass();
-    // We add the name of the author
-    $author->author_name = $data->author_name;
-    // We add the author's associated picture
-    $author->author_picture = $data->userfile;
-    $author->course_id = $data->courseid;
-    // We add the time of the insert
-    $author->time_added = $data->time_added;
-    // We add the userid
-    $author->user_id = $USER->id;
-    // We update the author's informations with the new picture
-    $DB->insert_record('randomstrayquotes_authors', $author, $returnid = true, $bulk = false);
-    $data = NULL;
-    $form = NULL;
-    redirect(new moodle_url('/mod/randomstrayquotes/add_authors.php', ['courseid' => $course_id, 'userid' => $USER->id]));
-*/
 
 }
 echo $OUTPUT->header();

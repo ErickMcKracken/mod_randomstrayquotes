@@ -6,11 +6,10 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG, $DB;
 
-#require_once('../../config.php');
-require_once ($CFG->dirroot.'/lib/formslib.php');
-require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
+//require_once($CFG->dirroot.'/lib/formslib.php');
+//require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
 
-class editQuote extends \moodleform {
+class editQuote extends formWithDelete {
 
     protected function definition() {
         global $PAGE, $DB, $CFG;
@@ -22,11 +21,15 @@ class editQuote extends \moodleform {
          // Recuperate the author id via the Array of parameters passed through the instanciation of the form
          $quoteid = $customdata['quoteid'];
          $courseid = $customdata['courseid'];
-         //var_dump("$courseid"); die;
 
-        //$quoteid = 1;
-        $queryquote = "Select * from {randomstrayquotes_quotes} where id= $quoteid";
-        $quote = $DB->get_record_sql($queryquote);
+        try{
+            $queryquote = "Select * from {randomstrayquotes_quotes} where id= $quoteid";
+            $quote = $DB->get_record_sql($queryquote);
+            }
+             catch (\dml_exception $e) {
+                   $url= new moodle_url('/mod/randomstrayquotes/list_quotes.php', array('id' => $courseid, 'status' =>'error'));
+                   redirect($url, 'This quote doesn\'t exist', 3);
+            }
 
         // Query to get the authors
         $selectAuth= array();
@@ -49,7 +52,7 @@ class editQuote extends \moodleform {
         // Combobox with categories
         $selectArray = array();
         $selectArray[0] = get_string('General', 'mod_randomstrayquotes');
-        $query = "Select * from {randomstrayquotes_categories}";
+        $query = "Select * from {randomstrayquotes_categories} where course_id = $courseid";
         $category_arr = $DB->get_records_sql($query);
 
         foreach($category_arr as $category) {
@@ -86,7 +89,6 @@ class editQuote extends \moodleform {
         $mform->setDefault('visible', $quote->visible);
         $mform->addGroup($radioarray, 'radioar', get_string('visible', 'mod_randomstrayquotes'), array(' '), false);
 
-
         // Indicate the user_id
         $mform->addElement('hidden', 'user_id');
         $mform->setDefault('user_id', $quote->user_id);
@@ -114,9 +116,8 @@ class editQuote extends \moodleform {
         $buttonarray = array();
         $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = & $mform->createElement('cancel');
-        $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class'=> 'btn btn-danger', 'value'=> 'delete'));
-        $buttonarray[] = & $mform->createElement('submit', 'backtolist', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'backtolist'));
+        $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete', 'mod_randomstrayquotes'), array('class'=> 'btn btn-danger', 'value'=> 'delete'));
+        // $buttonarray[] = & $mform->createElement('submit', 'backtolist', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'backtolist'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-
      }
 }

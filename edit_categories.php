@@ -1,10 +1,8 @@
 <?php
-//require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once('../../config.php');
-//require_once ($CFG->dirroot.'/lib/formslib.php');
-//require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
 
-global $CFG, $DB, $PAGE, $COURSE;
+require_once('../../config.php');
+
+global $CFG, $DB, $PAGE, $COURSE, $USER;
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
@@ -24,10 +22,17 @@ if (isset($_GET['courseid'])){
   $courseid = $_POST['course_id'];
 }
 
+if (isset($_GET['userid'])){
+  $userid = required_param('userid', PARAM_INT);
+}else{
+  $userid = $_POST['user_id'];
+}
+
 // We define the context
 $ctx = context_course::instance($courseid);
 // We pass custom data in parameter
 $customdata['ctx'] = $ctx;
+// We catch the category id in the adress bar
 $customdata['catid'] = $category_id ;
 // We catch the course id in the parameter in the adress bar
 $customdata['courseid'] = $courseid;
@@ -35,25 +40,20 @@ $customdata['courseid'] = $courseid;
 $form = new \mod_randomstrayquotes\forms\editCategory(null, $customdata);
 
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
-}
-
-if (isset($_POST['backtolist'])) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
-if (isset($_REQUEST['delete'])) {
+if ($form->is_deleted()){
   try{
       $transaction = $DB->start_delegated_transaction();
       $table = 'randomstrayquotes_categories';
       $DB->delete_records($table, array('id' => $category_id));
-      $url= new moodle_url('/mod/randomstrayquotes/add_categories.php', array('id' => $courseid));
-      #$url=  $CFG->wwwroot.'/course/view.php', array('id'=>$courseid);
+      $url= new moodle_url('/mod/randomstrayquotes/add_categories.php', array('courseid' => $courseid, 'userid' => $userid));
       $transaction->allow_commit();
       }
        catch (\Exception $e) {
              $transaction->rollback($e);
-             $url= new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('id' => $courseid, 'status' =>'error', 'catid' => $category_id ));
+             $url= new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('id' => $courseid,  'userid' => $userid, 'status' =>'error', 'catid' => $category_id ));
              redirect($url, 'Some error have occured', 3);
       }
       redirect($url, 'Transaction successful', 3);
@@ -72,16 +72,15 @@ if ($data = $form->get_data()) {
       $DB->update_record('randomstrayquotes_categories', $category, $returnid = true, $bulk = false);
       $data = NULL;
 
-      $url= new moodle_url('/mod/randomstrayquotes/edit_categories.php', ['courseid' => $courseid,  'userid' => $USER->id, 'catid' => $category_id ]);
+      $url= new moodle_url('/mod/randomstrayquotes/edit_categories.php', ['courseid' => $courseid,  'userid' => $userid, 'catid' => $category_id ]);
       $transaction->allow_commit();
       }
        catch (\Exception $e) {
              $transaction->rollback($e);
-             $url= new moodle_url('/mod/randomstrayquotes/list_categories.php', array('id' => $courseid, 'status' =>'error'));
+             $url= new moodle_url('/mod/randomstrayquotes/list_categories.php', array('courseid' => $courseid, 'userid' => $userid,'status' =>'error'));
              redirect($url, 'Some error have occured', 3);
       }
       redirect($url, 'Transaction successful', 3);
-
 }
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Edit a category');

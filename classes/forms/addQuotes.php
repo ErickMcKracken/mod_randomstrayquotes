@@ -13,7 +13,6 @@ class addQuotes extends \moodleform {
     protected function definition() {
         global $PAGE, $DB, $CFG;
         $mform = $this->_form;
-        //$courseid = 21155;
 
         // Array of parameters passed through the instanciation of the form
         $customdata = $this->_customdata;
@@ -33,7 +32,6 @@ class addQuotes extends \moodleform {
             $selectAuth[$key] = $value;
         }
         $mform->addElement('select', 'author', get_string('author_name', 'mod_randomstrayquotes'), $selectAuth);
-        //$mform->setDefault('author', $author->id);
         $mform->setType('id', PARAM_INT);
 
         // Combobox with categories
@@ -49,8 +47,6 @@ class addQuotes extends \moodleform {
         }
 
         $mform->addElement('select', 'category', get_string('category', 'mod_randomstrayquotes'),$selectArray);
-      //  $mform->setDefault('category',  $category['selected']);
-        //$mform->setDefault('category', 0)
         $mform->setType('category', PARAM_INT);
 
           // Add the quote

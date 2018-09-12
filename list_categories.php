@@ -10,13 +10,14 @@ $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/list_categories.php');
 echo $OUTPUT->header();
 defined('MOODLE_INTERNAL') || die();
 
+$user_id =  required_param('userid', PARAM_INT);
 $course_id =  required_param('courseid', PARAM_INT);
 $catquery = "Select * from {randomstrayquotes_categories} where course_id = $course_id";
 $cat_arr = $DB->get_records_sql($catquery);
 
 if ($cat_arr) {
     $renderer = $PAGE->get_renderer('mod_randomstrayquotes');
-    $content = $renderer->display_list_of_categories($cat_arr);
+    $content = $renderer->display_list_of_categories($cat_arr, $course_id, $user_id);
 } else {
     $content = 'Aucunes catégories n\'ont été saisies pour le moment';
 }

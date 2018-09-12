@@ -10,7 +10,7 @@ global $CFG, $DB;
 require_once ($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
 
-class editAuthor extends \moodleform {
+class editAuthor extends formWithDelete {
 
     protected function definition() {
         global $PAGE, $DB;
@@ -87,8 +87,8 @@ class editAuthor extends \moodleform {
         $buttonarray = array();
         $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = & $mform->createElement('cancel');
-        $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
-        $buttonarray[] = & $mform->createElement('submit', 'backtolist', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'backtolist'));
+        $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete', 'mod_randomstrayquotes'), array('class'=> 'btn btn-danger', 'value'=> 'delete'));
+        // $buttonarray[] = & $mform->createElement('submit', 'backtolist', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'backtolist'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
 
         // ??

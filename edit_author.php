@@ -1,8 +1,5 @@
 <?php
-//require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once('../../config.php');
-//require_once ($CFG->dirroot.'/lib/formslib.php');
-//require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
 
 global $CFG, $DB, $PAGE, $COURSE, $USER;
 
@@ -14,8 +11,6 @@ $PAGE->set_heading('Form Edit Authors');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/edit_author.php');
 
 // We catch the course id in the parameter in the adress bar
-//$course_id = required_param('courseid', PARAM_INT);
-
 if (isset($_GET['authorid'])){
    $authorid = required_param('authorid', PARAM_INT);
  }else{
@@ -39,42 +34,45 @@ $imageid = $DB->get_record('randomstrayquotes_authors', ['id' => $customdata['au
 
 // We setup the file storage area
 $fs = get_file_storage();
+
 // We obtain the filePathHash for the file storage area
 $imagePathHash = $fs->get_area_files($ctx->id, 'mod_randomstrayquotes', 'content', $imageid->author_picture, "itemid, filepath, filename", false);
+
 // We obtain the id of the picture file already present for the author using the imagePathHash
 $files = array_values($imagePathHash);
+
 // We store the context and the id of the file in an array of parameters that we will pass at the form instanciation
 $customdata['photofile'] = $files[0];
 $customdata['ctx'] = $ctx;
+
 // Instanciation of the form
 $form = new \mod_randomstrayquotes\forms\editAuthor(null, $customdata);
+
 // Define the maximum size of the file.  TODO: valeur répeptée à mettre dans une seule place
 $maxbytes = '50000';
-// if the form is canceled we retur to the addAuthor form
-if ($form->is_cancelled()) {
-    redirect(new moodle_url('/mod/randomstrayquotes/list_authors.php', ['courseid' => $course_id,  'userid' => $USER->id ]));
-}
 
-if (isset($_REQUEST['backtolist'])) {
+// if the form is canceled we retur to the List_Authors
+if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_authors.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
-if (isset($_REQUEST['delete'])) {
+if ($form->is_deleted()){
   try{
       $transaction = $DB->start_delegated_transaction();
       // We delete the author
       $table = 'randomstrayquotes_authors';
-      $DB->delete_records($table, array('id' => $_POST['authorid']));
+      #$DB->delete_records($table, array('id' => $_POST['authorid']));
       // We delete the quotes associated with this author
       $table2 = 'randomstrayquotes_quotes';
-      $DB->delete_records($table2, array('author_id' => $_POST['authorid']));
+      echo('delete');
+    #  $DB->delete_records($table2, array('author_id' => $_POST['authorid']));
 
-      $url= new moodle_url('/mod/randomstrayquotes/list_authors.php', array('courseid' => $courseid));
+      $url= new moodle_url('/mod/randomstrayquotes/list_authors.php', array('courseid' => $courseid, 'userid' => $USER->id));
       $transaction->allow_commit();
       }
        catch (\Exception $e) {
              $transaction->rollback($e);
-             $url= new moodle_url('/mod/randomstrayquotes/edit_author.php', array('courseid' => $courseid, 'status' =>'error'));
+             $url= new moodle_url('/mod/randomstrayquotes/edit_author.php', array('courseid' => $courseid,'userid' => $USER->id, 'status' =>'error'));
              redirect($url, 'Some error have occured', 3);
       }
       redirect($url, 'Transaction successful', 3);
@@ -94,6 +92,7 @@ if ($data = $form->get_data()) {
       $author->author_picture = $data->userfile;
       $author->author_name = $data->author_name;
 
+      echo('update');
       // We update the author's informations with the new picture
       $DB->update_record('randomstrayquotes_authors', $author);
 

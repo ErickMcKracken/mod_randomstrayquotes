@@ -1,9 +1,5 @@
 <?php
-//require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once('../../config.php');
-//require_once ($CFG->dirroot.'/lib/formslib.php');
-//require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
-
 global $CFG, $DB, $PAGE, $COURSE, $USER;
 
 $PAGE->set_context(context_system::instance());
@@ -13,7 +9,6 @@ $PAGE->set_heading('Form Add Quote');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/add_quotes.php');
 
 // We catch the course id in the parameter in the adress bar and pass it to the form
-
 if (isset($_GET['courseid'])){
   $course_id = required_param('courseid', PARAM_INT);
 }else{

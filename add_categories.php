@@ -12,9 +12,12 @@ $PAGE->set_title('Add Categories');
 $PAGE->set_heading('Form Add Categories');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/add_categories.php');
 
-$courseid = $COURSE->id;
+if (isset($_GET['courseid'])){
+  $courseid = required_param('courseid', PARAM_INT);
+}else{
+  $courseid = $_POST['course_id'];
+}
 
-// We define the context
 $ctx = context_course::instance($courseid);
 // We pass custom data in parameter
 $customdata['ctx'] = $ctx;
@@ -24,7 +27,7 @@ $customdata['courseid'] = $courseid;
 $form = new \mod_randomstrayquotes\forms\addCategories();
 
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
+    redirect(new moodle_url('/mod/randomstrayquotes/list_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
 if ($data = $form->get_data()) {
@@ -49,29 +52,15 @@ if ($data = $form->get_data()) {
              redirect($url, 'Some error have occured', 3);
       }
       redirect($url, 'Transaction successful', 3);
-
-
-  /*
-    $category = new stdClass();
-    $category->category_name = $data->category_name;
-    $category->user_id = $data->user_id;
-    $category->course_id = $data->course_id;
-
-    // We insert the category
-    $DB->insert_record('randomstrayquotes_categories', $category, $returnid = true, $bulk = false);
-    $data = NULL;
-  // $form = NULL;
-    //redirect(new moodle_url('/mod/randomstrayquotes/add_categories.php');
-
-    */
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Add a Category');
 echo $form->display();
+
 //Quotes Listing
 
-        $catquery = "Select * from {randomstrayquotes_categories}";
+        $catquery = "Select * from {randomstrayquotes_categories}  where course_id = $courseid";
         $cat_arr = $DB->get_records_sql($catquery);
 
             if ($cat_arr ) {
@@ -83,6 +72,5 @@ echo $form->display();
                 }
 
                 echo ($content);
-
 
 echo $OUTPUT->footer();

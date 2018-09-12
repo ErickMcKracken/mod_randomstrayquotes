@@ -1,29 +1,23 @@
 <?php
-
 namespace mod_randomstrayquotes\forms;
 
 defined('MOODLE_INTERNAL') || die();
 
-#require_once('../../config.php');
 require_once ($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
-/*
-  require_once($CFG->libdir . '/filelib.php');
-  require_once(dirname(__FILE__) . '/lib.php');
- */
 
 class addAuthors extends \moodleform {
 
     protected function definition() {
         global $CFG, $DB, $COURSE, $USER, $CONTEXT;
 
-// Array of parameters passed through the instanciation of the form
+        // Array of parameters passed through the instanciation of the form
         $customdata = $this->_customdata;
 
-// Create the form
+        // Create the form
         $mform = $this->_form;
 
-// Texbox to add an author
+        // Texbox to add an author
         $attributes = array('size' => '50', 'maxlength' => '100');
         $mform->addElement('text', 'author_name', get_string('author_name', 'mod_randomstrayquotes'), $attributes);
         $mform->addRule('author_name', null, 'required', null, 'client');
@@ -33,7 +27,7 @@ class addAuthors extends \moodleform {
         $entry->id = null;
         $draftitemid = null;
 
-// Add picture
+        // Add picture
         $maxbytes = '50000';
         file_prepare_draft_area(
                 $draftitemid, $customdata['ctx']->id, 'mod_randomstrayquotes', 'content', $entry->id, array('subdirs' => 0, 'maxbytes' => $maxbytes, 'maxfiles' => 50)
@@ -60,7 +54,7 @@ class addAuthors extends \moodleform {
         $buttonarray = array();
         $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = & $mform->createElement('cancel');
-        $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
+        //$buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete'), array('class' => 'btn btn-danger'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $this->set_data($entry);
     }
