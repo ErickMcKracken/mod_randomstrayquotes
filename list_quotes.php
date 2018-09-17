@@ -1,8 +1,8 @@
 <?php
 require_once('../../config.php');
-
 global $CFG, $PAGE;
 defined('MOODLE_INTERNAL') || die();
+require_login();
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title('List Quotes');

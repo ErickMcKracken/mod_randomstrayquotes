@@ -2,8 +2,6 @@
 
 namespace mod_randomstrayquotes\forms;
 
-defined('MOODLE_INTERNAL') || die();
-
 global $CFG, $DB;
 
 #require_once('../../config.php');
@@ -88,10 +86,7 @@ class editAuthor extends formWithDelete {
         $buttonarray[] = & $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
         $buttonarray[] = & $mform->createElement('cancel');
         $buttonarray[] = & $mform->createElement('submit', 'delete', get_string('delete', 'mod_randomstrayquotes'), array('class'=> 'btn btn-danger', 'value'=> 'delete'));
-        // $buttonarray[] = & $mform->createElement('submit', 'backtolist', get_string('backtolist', 'mod_randomstrayquotes'), array('value'=> 'backtolist'));
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
-
-        // ??
         $this->set_data($entry);
     }
 

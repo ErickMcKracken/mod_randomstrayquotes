@@ -2,8 +2,6 @@
 
 namespace mod_randomstrayquotes\forms;
 
-defined('MOODLE_INTERNAL') || die();
-
 global $CFG, $DB;
 
 //require_once($CFG->dirroot.'/lib/formslib.php');

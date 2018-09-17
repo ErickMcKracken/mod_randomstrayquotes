@@ -1,6 +1,7 @@
 <?php
 require_once('../../config.php');
-
+defined('MOODLE_INTERNAL') || die();
+require_login();
 global $CFG, $DB, $PAGE, $COURSE, $USER;
 
 // Configuration of the page

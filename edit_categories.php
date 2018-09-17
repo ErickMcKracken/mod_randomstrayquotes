@@ -1,7 +1,8 @@
 <?php
 
 require_once('../../config.php');
-
+defined('MOODLE_INTERNAL') || die();
+require_login();
 global $CFG, $DB, $PAGE, $COURSE, $USER;
 
 $PAGE->set_context(context_system::instance());

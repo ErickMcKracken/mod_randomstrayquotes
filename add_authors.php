@@ -1,9 +1,8 @@
 <?php
 
-//require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once('../../config.php');
-//require_once ($CFG->dirroot.'/lib/formslib.php');
-//require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
+defined('MOODLE_INTERNAL') || die();
+require_login();
 
 global $CFG, $DB, $PAGE, $COURSE, $CONTEXT, $USER;
 

@@ -5,7 +5,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG, $DB;
 
-#require_once('../../config.php');
 require_once ($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot . '/mod/randomstrayquotes/locallib.php');
 
