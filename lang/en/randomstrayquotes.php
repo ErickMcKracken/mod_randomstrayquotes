@@ -73,3 +73,7 @@ $string['randomstrayquotes:submit'] = 'Soumettre';
 $string['randomstrayquotes:addinstance']  = 'Add Instance';
 $string['backtolist']  = 'Back to the List';
 $string['Cancel']  = 'Cancel';
+$string['Grades']  = 'Grades';
+$string['Grade']  = 'Grade';
+$string['Contributors']  = 'Contributors';
+$string['Contributions']  = 'Contributions';

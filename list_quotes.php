@@ -37,7 +37,7 @@ if (isset($_REQUEST['Addquotes'])) {
 echo $OUTPUT->header();
 echo $form->display();
 
-$quotesquery = "Select * from {randomstrayquotes_quotes} where course_id = $course_id";
+$quotesquery = "Select * from {randomstrayquotes_quotes} where course_id = $course_id and visible = 1";
 $quotes_arr = $DB->get_records_sql($quotesquery);
 
 if ($quotes_arr) {

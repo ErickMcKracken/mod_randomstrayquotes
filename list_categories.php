@@ -9,7 +9,6 @@ $PAGE->set_title('List Categories');
 $PAGE->set_heading('List Categories');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/list_categories.php');
 echo $OUTPUT->header();
-defined('MOODLE_INTERNAL') || die();
 
 $user_id =  required_param('userid', PARAM_INT);
 $course_id =  required_param('courseid', PARAM_INT);

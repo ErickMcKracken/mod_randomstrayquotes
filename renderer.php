@@ -51,7 +51,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         $queryusername = "Select * from {user} where id= $userid";
         $username = $DB->get_record_sql($queryusername);
         if($username == false){
-          $username = 'user destroyed';
+          $username = 'User Destroyed';
         }else{
           $firstname = $username->firstname;
           $lastname = $username->lastname;
@@ -74,26 +74,37 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
 
     function get_author_name($author_id){
      global $DB;
-     $queryauthor = "Select * from {randomstrayquotes_authors} where id= $author_id";
-     $author = $DB->get_record_sql($queryauthor);
+       $queryauthor = "Select * from {randomstrayquotes_authors} where id= $author_id";
+       $author = $DB->get_record_sql($queryauthor);
 
-     if ($author == false){
-       $authorname = "Author destroyed";
-     }else{
-        $authorname = $author->author_name;
-     }
+       if ($author == false){
+         $authorname = "Author destroyed";
+       }else{
+          $authorname = $author->author_name;
+       }
      return $authorname;
     }
 
     function format_date_time($datetime_to_format){
 
-      $date = substr($datetime_to_format, 0, 10);
-      $time = substr($datetime_to_format, 11, 4);
-      $hours = substr($time, 0,2);
-      $minutes = substr($time, 2,4);
-      $formateddatetime = $date . ' ' . $hours . ':' . $minutes;
+        $date = substr($datetime_to_format, 0, 10);
+        $time = substr($datetime_to_format, 11, 4);
+        $hours = substr($time, 0,2);
+        $minutes = substr($time, 2,4);
+        $formateddatetime = $date . ' ' . $hours . ':' . $minutes;
 
       return $formateddatetime;
+    }
+
+    function number_of_contributions($userid, $courseid){
+      global $DB;
+
+        $contributions_query = "Select count(*) from {randomstrayquotes_quotes} where user_id = $userid and course_id = $courseid";
+        $nbr_contributions = $DB->get_records_sql($contributions_query);
+        //settype($nbr_contributions, 'integer');
+        $values = array_keys($nbr_contributions);
+      return $values[0];
+
     }
 
     function display_list_of_quotes($arr_quotes, $userid, $courseid){
@@ -111,6 +122,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     $content .= html_writer::end_tag('th');
     $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
     $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/add_categories.php', array('courseid' => $courseid, 'userid' => $userid)), get_string('Addcategories', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+    $content .= html_writer::end_tag('th');
+    $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+    $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/contributors_list.php', array('courseid' => $courseid, 'userid' => $userid)), get_string('Contributors', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
     $content .= html_writer::end_tag('th');
     $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
     $content .= html_writer::link(new moodle_url('/course/view.php', array('id' => $courseid, 'userid' => $userid)), get_string('Cancel', 'randomstrayquotes'), array('class'=> 'btn btn-danger', 'role'=> 'button', 'aria-pressed'=>'true'));
@@ -190,8 +204,50 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
       return $content;
     }
 
-    function display_list_of_authors($arr_authors, $courseid, $userid){
+    function display_list_of_contributors($arr_contributors, $courseid, $userid){
+      // Table with list of quotes
+      $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
+      $content .= html_writer::start_tag('tr', array('class' => 'contributor_list_header_row'));
+      $content .= html_writer::start_tag('th', array('class' => 'contributor_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Contributor' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'contributor_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Number of Quotes' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'contributor_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'List of Contributions' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::start_tag('th', array('class' => 'contributor_list_header_cell'));
+      $content .= html_writer::start_span('author-display') .  'Grade' . html_writer::end_span();
+      $content .= html_writer::end_tag('th');
+      $content .= html_writer::end_tag('td');
+      // Table with list of contributors
+      foreach ($arr_contributors as $contributor){
+        //var_dump($contributor->user_id);die;
+        $userpix =  $this->get_user_image($contributor->user_id, $courseid);
+        $content .= html_writer::start_tag('tr', array('class' => 'contributors_list'));
+        $content .= html_writer::start_tag('td', array('class' => 'contributors_list'));
+        $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'headingimage'));
+        $content .= html_writer::empty_tag('br');
+        $content .= html_writer::start_span('contributor-display') .  $this->get_user_name($contributor->user_id) . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'contributor_list'));
+        $content .= html_writer::start_span('contributor-display') .  $this->number_of_contributions($contributor->user_id, $courseid) . html_writer::end_span();
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'contributor_list'));
+        $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/contributions_list.php', array('courseid' => $courseid, 'userid' => $userid)), get_string('Contributions', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::start_tag('td', array('class' => 'contributor_list'));
+        $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/grade.php', array('id' => $courseid, 'userid' => $userid)), get_string('Grade', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+        $content .= html_writer::end_tag('td');
+        $content .= html_writer::end_tag('td');
+      }
+      $content .= html_writer::end_tag('table');
+      return $content;
+    }
 
+    function display_list_of_authors($arr_authors, $courseid, $userid){
       // Navigation buttons
       $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
       $content .= html_writer::start_tag('tr', array('class' => 'author_list_header_row'));
@@ -223,11 +279,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
       $content .= html_writer::start_span('author-display') .  'Time Added' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
-
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
       $content .= html_writer::start_span('author-display') .  'Added by' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
-
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
       $content .= html_writer::start_span('author-display') .  'Time Updated' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
@@ -380,6 +434,58 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         }
         return $url;
     }
+
+    function get_user_image($userid, $courseid){
+        global $DB, $COURSE;
+
+        // We define the context
+        //return $userid;
+        try {
+          $ctx = context_user::instance($userid);
+        } catch (dml_missing_record_exception $e) {
+            $url = "/mod/randomstrayquotes/pix/xx.jpg";
+          return $url;
+        }
+
+        //var_dump($ctx->id);
+        // We setup the file storage area
+      //  $imageid = $DB->get_record('user', ['id' => 2], 'picture');
+        $imageid = $DB->get_record('user', ['id' => $userid], 'picture');
+        //var_dump($imageid);die;
+        $fs = get_file_storage();
+        //var_dump($fs);
+        // We obtain the filePathHash for the file storage area
+        $imagePathHash = $fs->get_area_files($ctx->id, 'user', 'icon', 0, "itemid, filepath, filename", false);
+        //echo "<pre>";var_dump($imagePathHash);echo "</pre>";die;
+
+        // We obtain the id of the picture file already present for the author using the imagePathHash
+        $files = array_values($imagePathHash);
+        //echo "<pre>";var_dump($files);echo "</pre>";die;
+        // We store the context and the id of the file in an array of parameters that we will pass at the form instanciation
+        //$file = $files[0];
+
+        foreach ($files as $file){
+                 if ($file) {
+                  $filename = $file->get_filename();
+                  if ($filename){
+                      $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'user','icon', $file->get_itemid(),'/' ,$filename);
+                 }else{
+                      $url = "/mod/randomstrayquotes/pix/xx.jpg";
+                 }
+           }
+               return $url;
+        }
+/*
+        if($file){
+            $filename = $file->get_filename();
+            $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'user','icon', $file->get_itemid(),'/' ,$filename);
+        }else{
+            $url ="";
+        }
+*/
+
+    }
+
 
     function display_authors($arr_authors){
            global $COURSE;
