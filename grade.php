@@ -30,5 +30,24 @@ $id = required_param('id', PARAM_INT);// Course module ID.
 $itemnumber = optional_param('itemnumber', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT); // Graded user ID (optional).
 
+//if (! $cm = get_coursemodule_from_id('randomstrayquotes', $id, 0, false, MUST_EXIST)){
+if (! $cm = get_coursemodule_from_id('randomstrayquotes', $id)){
+  print_error('invalidcoursemodule');
+}
+
+if(! $randomstrayquotes = $DB->get_record('randomstrayquotes', array('id' => $cm->instance))){
+  print_error('invalidcoursemodule');
+}
+
+if (! $course = $DB->get_record('course', array('id' => $randomstrayquotes->course))){
+  print_error('coursemisconf');
+}
+
+require_login($course, false, $cm);
+
 // In the simplest case just redirect to the view page.
-redirect('view.php?id='.$id);
+if(has_capability('mod/randomstrayquotes:viewreport', context_module::instance($cm->id))){
+  redirect('report.php?id=' .$cm->id);
+}else{
+  redirect('view.php?id=' .$cm->id);
+}

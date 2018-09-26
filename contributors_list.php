@@ -9,7 +9,7 @@ $PAGE->set_title('Contributors List');
 $PAGE->set_heading('Contributors List');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/contributors_list.php');
 echo $OUTPUT->header();
-
+echo $OUTPUT->heading('Contributor\'s List');
 $userid =  required_param('userid', PARAM_INT);
 $courseid =  required_param('courseid', PARAM_INT);
 $contributorsquery = "Select distinct user_id  from {randomstrayquotes_quotes} where course_id = $courseid and visible = 1";

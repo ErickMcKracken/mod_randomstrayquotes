@@ -36,3 +36,143 @@ defined('MOODLE_INTERNAL') || die();
  *    return new stdClass();
  *}
  */
+ function get_image($authorid, $courseid){
+     global $DB, $COURSE;
+
+     // We define the context
+     $ctx = context_course::instance($courseid);
+
+     // We setup the file storage area
+     $imageid = $DB->get_record('randomstrayquotes_authors', ['id' => $authorid], 'author_picture');
+     $fs = get_file_storage();
+
+     // We obtain the filePathHash for the file storage area
+     $imagePathHash = $fs->get_area_files($ctx->id, 'mod_randomstrayquotes', 'content', $imageid->author_picture, "itemid, filepath, filename", false);
+
+     // We obtain the id of the picture file already present for the author using the imagePathHash
+     $files = array_values($imagePathHash);
+
+     // We store the context and the id of the file in an array of parameters that we will pass at the form instanciation
+     $file = $files[0];
+
+     if($file){
+         $filename = $file->get_filename();
+         $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'mod_randomstrayquotes','content', $file->get_itemid(),'/' ,$filename);
+     }else{
+         echo("Error");
+     }
+     return $url;
+ }
+
+ function get_category_name($category_id){
+   global $DB;
+   $querycat = "Select * from {randomstrayquotes_categories} where id= $category_id";
+   $category = $DB->get_record_sql($querycat);
+     if($category == false){
+       $categoryname = 'category destroyed';
+     }else{
+       $categoryname = $category->category_name;
+     }
+   return $categoryname;
+ }
+
+ function get_author_name($author_id){
+  global $DB;
+    $queryauthor = "Select * from {randomstrayquotes_authors} where id= $author_id";
+    $author = $DB->get_record_sql($queryauthor);
+
+    if ($author == false){
+      $authorname = "Author destroyed";
+    }else{
+       $authorname = $author->author_name;
+    }
+  return $authorname;
+ }
+
+ //  Retrieve the author of the associated quote and his picture
+  function get_author($DB, $quoteid) {
+     $author = $DB->get_record('randomstrayquotes_authors', array('id' => $quoteid), '*', MUST_EXIST);
+  return $author;
+ }
+
+ //   Retrieve the author of the associated quote and his picture
+  function get_category($DB, $categoryid) {
+     $category = $DB->get_record('randomstrayquotes_categories', array('id' => $categoryid), '*', MUST_EXIST);
+  return $category;
+ }
+
+ function format_date_time($datetime_to_format){
+
+     $date = substr($datetime_to_format, 0, 10);
+     $time = substr($datetime_to_format, 11, 4);
+     $hours = substr($time, 0,2);
+     $minutes = substr($time, 2,4);
+     $formateddatetime = $date . ' ' . $hours . ':' . $minutes;
+
+   return $formateddatetime;
+ }
+
+ function number_of_contributions($userid, $courseid){
+   global $DB;
+
+     $contributions_query = "Select count(*) from {randomstrayquotes_quotes} where user_id = $userid and course_id = $courseid";
+     $nbr_contributions = $DB->get_records_sql($contributions_query);
+     //settype($nbr_contributions, 'integer');
+     $values = array_keys($nbr_contributions);
+   return $values[0];
+ }
+
+  function get_user_name($userid){
+     global $DB;
+     $queryusername = "Select * from {user} where id= $userid";
+     $username = $DB->get_record_sql($queryusername);
+     if($username == false){
+       $username = 'User Destroyed';
+     }else{
+       $firstname = $username->firstname;
+       $lastname = $username->lastname;
+       $username = $firstname . ' ' . $lastname;
+     }
+   return $username;
+  }
+
+  function get_user_image($userid, $courseid){
+     global $DB, $COURSE;
+
+     // We define the context  + return $userid;
+     try {
+       $ctx = context_user::instance($userid);
+     } catch (dml_missing_record_exception $e) {
+         $url = "/mod/randomstrayquotes/pix/xx.jpg";
+       return $url;
+     }
+
+     //var_dump($ctx->id);
+     // We setup the file storage area
+   //  $imageid = $DB->get_record('user', ['id' => 2], 'picture');
+     $imageid = $DB->get_record('user', ['id' => $userid], 'picture');
+     //var_dump($imageid);die;
+     $fs = get_file_storage();
+     //var_dump($fs);
+     // We obtain the filePathHash for the file storage area
+     $imagePathHash = $fs->get_area_files($ctx->id, 'user', 'icon', 0, "itemid, filepath, filename", false);
+     //echo "<pre>";var_dump($imagePathHash);echo "</pre>";die;
+
+     // We obtain the id of the picture file already present for the author using the imagePathHash
+     $files = array_values($imagePathHash);
+     //echo "<pre>";var_dump($files);echo "</pre>";die;
+     // We store the context and the id of the file in an array of parameters that we will pass at the form instanciation
+     //$file = $files[0];
+
+     foreach ($files as $file){
+              if ($file) {
+               $filename = $file->get_filename();
+               if ($filename){
+                   $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'user','icon', $file->get_itemid(),'/' ,$filename);
+              }else{
+                   $url = "/mod/randomstrayquotes/pix/xx.jpg";
+              }
+        }
+            return $url;
+     }
+  }

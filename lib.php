@@ -99,14 +99,13 @@ function randomstrayquotes_add_instance(stdClass $randomstrayquotes, mod_randoms
  * @param mod_newmodule_mod_form $mform The form instance itself (if needed)
  * @return boolean Success/Fail
  */
-function randomstrayquotes_update_instance(stdClass $randomstrayquotes, mod_randomstrayquotes_mod_form $mform = null) {
-    global $DB;
+function randomstrayquotes_update_instance($randomstrayquotes, $mform = null) {
+    global $DB, $CFG;
 
     $randomstrayquotes->timemodified = time();
     $randomstrayquotes->id = $randomstrayquotes->instance;
 
     // You may have to add extra stuff in here.
-
     $result = $DB->update_record('randomstrayquotes', $randomstrayquotes);
 
     randomstrayquotes_grade_item_update($randomstrayquotes);
@@ -160,6 +159,14 @@ function randomstrayquotes_delete_instance($id) {
 
     if (! $randomstrayquotes = $DB->get_record('randomstrayquotes', array('id' => $id))) {
         return false;
+        /*
+      }else{
+
+        $randomstrayquotes = $DB->get_record('randomstrayquotes', array('id' => $id), MUST_EXIST);
+        delete_randomstrayquotes_quotes($randomstrayquotes);
+        delete_randomstrayquotes_categories($randomstrayquotes);
+        delete_randomstraquotes_authors($randomstrayquotes);
+        */
     }
 
     // Delete any dependent records here.
@@ -329,11 +336,15 @@ function randomstrayquotes_scale_used_anywhere($scaleid) {
  */
 function randomstrayquotes_grade_item_update(stdClass $randomstrayquotes, $reset=false) {
     global $CFG;
-    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/mod/randomstrayquotes/locallib.php');
 
-    $item = array();
-    $item['itemname'] = clean_param($randomstrayquotes->name, PARAM_NOTAGS);
-    $item['gradetype'] = GRADE_TYPE_VALUE;
+    if(!function_exists('grade_update')) {
+      require_once($CFG->libdir.'/gradelib.php');
+    }
+
+    $item = array('itemname'=>$forum->name, 'idnumber'=>$randomstrayquotes->cmidnumber);
+    //$item['itemname'] = clean_param($randomstrayquotes->name, PARAM_NOTAGS);
+    //$item['gradetype'] = GRADE_TYPE_VALUE;
 
     if ($randomstrayquotes->grade > 0) {
         $item['gradetype'] = GRADE_TYPE_VALUE;
@@ -350,7 +361,7 @@ function randomstrayquotes_grade_item_update(stdClass $randomstrayquotes, $reset
         $item['reset'] = true;
     }
 
-    grade_update('mod/randomstrayquotes', $randomstrayquotes->course, 'mod', 'randomstrayquotes',
+  return  grade_update('mod/randomstrayquotes', $randomstrayquotes->course, 'mod', 'randomstrayquotes',
             $randomstrayquotes->id, 0, null, $item);
 }
 
@@ -376,14 +387,26 @@ function randomstrayquotes_grade_item_delete($randomstrayquotes) {
  * @param stdClass $newmodule instance object with extra cmidnumber and modname property
  * @param int $userid update grade of specific user only, 0 means all participants
  */
-function randomstrayquotes_update_grades(stdClass $randomstrayquotes, $userid = 0) {
+function randomstrayquotes_update_grades($randomstrayquotes, $userid = 0, $nullifnone = true) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
-
-    // Populate array of grade objects indexed by userid.
     $grades = array();
 
-    grade_update('mod/randomstrayquotes', $randomstrayquotes->course, 'mod', 'randomstrayquotes', $randomstrayquotes->id, 0, $grades);
+    // Populate array of grade objects indexed by userid.
+    if($randomstrayquotes->assessed){
+      randomstrayquotes_grade_item_update($randomstrayquotes);
+    }else if ($grade = randomstrayquotes_get_user_grades($randomstrayquotes, $userid)){
+      randomstrayquotes_grade_item_update($randomstrayquotes, $grades);
+    }else if ($userid && $nullifnone){
+      $grade = new stdClass();
+      $grade->userid = $userid;
+      $grade->rawgrade = null;
+      randomstrayquotes_grade_item_update($randomstrayquotes, $grade);
+    }else{
+      randomstrayquotes_grade_item_update($randomstrayquotes);
+    }
+
+    //grade_update('mod/randomstrayquotes', $randomstrayquotes->course, 'mod', 'randomstrayquotes', $randomstrayquotes->id, 0, $grades);
 }
 
 /* File API */
@@ -460,7 +483,7 @@ function randomstrayquotes_pluginfile($course, $cm, $context, $filearea, array $
     else {
         return false;
     }
-    
+
     $fs = get_file_storage();
     $fs->get_file_by_id($fileid);
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
@@ -473,7 +496,7 @@ function randomstrayquotes_pluginfile($course, $cm, $context, $filearea, array $
 
     // Finally send the file.
     send_stored_file($file, 0, 0, false, $options);
-    
+
 }
 
 /* Navigation API */
@@ -503,4 +526,46 @@ function randomstrayquotes_extend_navigation(navigation_node $navref, stdClass $
  */
 function randomstrayquotes_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $newmodulenode=null) {
     // TODO Delete this function and its docblock, or implement it.
+}
+
+function randomstrayquotes_reset_course_form_definition(&$mform){
+
+  $mform->addElement('header', 'forumheader', get_string('resetrandomstrayquotes', 'randomstrayquotes'));
+
+  $mform->addElements('checkbox', 'reset_randomstrayquotes_all', get_string('resetrandomstrayquotesall', 'randomstrayquotes'));
+
+  $mform->addElement('checkbox', 'reset_randomsrayquotes_authors', get_string('resetrandomstrayquotesauthors', 'randomstrayquotes'));
+  $mform->setAdvanced('reset_randomstrayquotes_authors');
+  $mform->disabledif('reset_randomstrayquotes_quotes', 'reset_randomstrayquotes_all', 'checked');
+
+  $mform->addElement('checkbox', 'reset_randomstrayquotes_categories', get_string('resetrandomstrayquotescategories', 'randomstrayquotes'));
+  $mform->setAdvanced('reset_randomstrayquotes_categories');
+  $mform->disabledif( 'reset_randomstrayquotes_all', 'checked');
+
+  $mform->addElement('checkbox', 'reset_randomstrayquotes_quotes', get_string('resetrandomstrayquotesquotes', 'randomstrayquotes'));
+  $mform->setAdvanced('reset_randomstrayquotes_quotes');
+  $mform->disabledif('reset_randomstrayquotes_all', 'checked');
+
+}
+
+function randomstrayquotes_reset_userdata($data){
+  if (!empty($data->reset_randomstrayquotes)){
+    if (delete_records('randomstrayquotes_categories', 'courseid', $data->courseid)){
+      notify(get_string('randomstrayquotes_categories_deleted', 'randomstrayquotes'), 'notifysuccess');
+    }
+  }
+  if (!empty($data->reset_randomstrayquotes_authors)){
+    if (delete_records('randomstrayquotes_authors', 'courseid', $data->courseid)){
+      notify(get_string('randomstrayquotes_authors_deleted', 'randomstrayquotes'), 'notifysuccess');
+    }
+  }
+  if (!empty($data->reset_randomstrayquotes_quotes)){
+    if (delete_records('randomstrayquotes_quotes', 'courseid', $data->courseid)){
+      notify(get_string('randomstrayquotes_quotes_deleted', 'randomstrayquotes'), 'notifysuccess');
+    }
+  }
+}
+
+function randomstrayquotes_reset_course_form_defaults($course){
+  return array('reset_randomstrayquotes_all'=>1, 'reset_randomstrayquotes_all');
 }
