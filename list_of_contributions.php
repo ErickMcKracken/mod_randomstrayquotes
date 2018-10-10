@@ -21,6 +21,15 @@ echo ("<img src=" . get_user_image($userid, $courseid) . ">" );
 echo ("</td><td>");
 echo ("<h2>" . get_user_name($userid) . "</h2>");
 echo("</table></tr></td>");
+/*
+$xx = get_coursemodule_from_id('randomstrayquotes',32);
+echo('<pre>');
+var_dump($xx);
+echo('</pre>');
+
+
+$cm         = get_coursemodule_from_id('randomstrayquotes', $id, 0, false, MUST_EXIST);
+*/
 
 $contributionsquery = "Select * from {randomstrayquotes_quotes} where user_id = $userid and visible = 1";
 $contributions_arr = $DB->get_records_sql($contributionsquery);
@@ -31,5 +40,7 @@ if ($contributions_arr) {
 } else {
     $content = 'Aucunes contributions pour le moment';
 }
+
+
 echo ($content);
 echo $OUTPUT->footer();

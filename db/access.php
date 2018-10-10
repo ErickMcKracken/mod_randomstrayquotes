@@ -48,6 +48,16 @@ defined('MOODLE_INTERNAL') || die();
 
 // Modify capabilities as needed and remove this comment.
 $capabilities = array(
+
+  'mod/randomstrayquotes:viewreport'=> array(
+    'captype' => 'read',
+    'contextlevel' => CONTEXT_MODULE,
+    'archetypes' => array(
+        'guest' => CAP_ALLOW,
+        'user' => CAP_ALLOW,
+     )
+  ),
+
     'mod/randomstrayquotes:addinstance' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',

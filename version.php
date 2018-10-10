@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_randomstrayquotes';
-$plugin->version = 2018083114;   //2018052990;
+$plugin->version = 2018092816;  //2018083114 //2018052990;
 $plugin->release = 'v0.1';
 $plugin->requires = 2014051200;
 $plugin->maturity = MATURITY_ALPHA;

@@ -117,7 +117,6 @@ defined('MOODLE_INTERNAL') || die();
 
      $contributions_query = "Select count(*) from {randomstrayquotes_quotes} where user_id = $userid and course_id = $courseid";
      $nbr_contributions = $DB->get_records_sql($contributions_query);
-     //settype($nbr_contributions, 'integer');
      $values = array_keys($nbr_contributions);
    return $values[0];
  }

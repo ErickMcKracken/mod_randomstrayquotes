@@ -33,16 +33,16 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
-$r  = optional_param('r', 0, PARAM_INT);  // ... randomstrayquotes instance ID - it should be named as the first character of the module.
+$r  = optional_param('r', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
 
 global $USER;
 
 if ($id) {
     $cm         = get_coursemodule_from_id('randomstrayquotes', $id, 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $randomstrayquotes  = $DB->get_record('randomstrayquotes', array('id' => $cm->instance), '*', MUST_EXIST);
+    $newmodule  = $DB->get_record('randomstrayquotes', array('id' => $cm->instance), '*', MUST_EXIST);
 } else if ($r) {
-    $randomstrayquotes  = $DB->get_record('randomstrayquotes', array('id' => $r), '*', MUST_EXIST);
+    $newmodule  = $DB->get_record('randomstrayquotes', array('id' => $r), '*', MUST_EXIST);
     $course     = $DB->get_record('randomstrayquotes', array('id' => $randomstrayquotes->course), '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('randomstrayquotes', $randomstrayquotes->id, $course->id, false, MUST_EXIST);
 } else {
@@ -75,40 +75,10 @@ $event->trigger();
 
 // Print the page header.
 
-$PAGE->set_url('/mod/randomstrayquotes/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/randomstrayquotes/report.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($randomstrayquotes->name));
 $PAGE->set_heading(format_string($course->fullname));
 
 // Output starts here.
 echo $OUTPUT->header();
-
-// Conditions to show the intro can change to look for own settings or whatever.
-
-if ($randomstrayquotes->intro) {
-    echo $OUTPUT->box(format_module_intro('randomstrayquotes', $newmodule, $cm->id), 'generalbox mod_introbox', 'newmoduleintro');
-}
-
-
-
-if ($randomstrayquotes->intro) {
-    echo $OUTPUT->box(format_module_intro('randomstrayquotes', $randomstrayquotes, $cm->id), 'generalbox mod_introbox', 'newmoduleintro');
-}
-
-// Replace the following lines with you own code.
-echo $OUTPUT->heading('Manage Quotes');
-
- #Quotes Listing
-        $selectArray = array();
-        $quotesquery = "Select * from {randomstrayquotes_quotes} where course_id = $course->id and visible = 1";
-        $quotes_arr = $DB->get_records_sql($quotesquery);
-
-            if ($quotes_arr) {
-                    $renderer = $PAGE->get_renderer('mod_randomstrayquotes');
-                    $content = $renderer->display_list_of_quotes($quotes_arr, $USER->id,$course->id);
-                } else {
-                    $content = 'Aucunes citations n\'ont été saisies pour le moment';
-                }
-
-                echo ($content);
-
 echo $OUTPUT->footer();

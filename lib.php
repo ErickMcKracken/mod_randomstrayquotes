@@ -342,7 +342,7 @@ function randomstrayquotes_grade_item_update(stdClass $randomstrayquotes, $reset
       require_once($CFG->libdir.'/gradelib.php');
     }
 
-    $item = array('itemname'=>$forum->name, 'idnumber'=>$randomstrayquotes->cmidnumber);
+    $item = array('itemname'=>$randomstrayquotes->name, 'idnumber'=>$randomstrayquotes->cmidnumber);
     //$item['itemname'] = clean_param($randomstrayquotes->name, PARAM_NOTAGS);
     //$item['gradetype'] = GRADE_TYPE_VALUE;
 
@@ -393,7 +393,7 @@ function randomstrayquotes_update_grades($randomstrayquotes, $userid = 0, $nulli
     $grades = array();
 
     // Populate array of grade objects indexed by userid.
-    if($randomstrayquotes->assessed){
+    if($randomstrayquotes->grade == 0){
       randomstrayquotes_grade_item_update($randomstrayquotes);
     }else if ($grade = randomstrayquotes_get_user_grades($randomstrayquotes, $userid)){
       randomstrayquotes_grade_item_update($randomstrayquotes, $grades);
@@ -568,4 +568,57 @@ function randomstrayquotes_reset_userdata($data){
 
 function randomstrayquotes_reset_course_form_defaults($course){
   return array('reset_randomstrayquotes_all'=>1, 'reset_randomstrayquotes_all');
+}
+
+function randomstrayquotes_get_user_grades($randomstrayquotes, $userid, $courseid){
+  /*
+  global $CFG, $DB;
+  require_once($CFG->dirroot. '/mod/randomstrayquotes/locallib.php');
+  $grade_item = new grade_item(array('id'=>0, 'courseid'=>$courseid));
+  grade_item::set_propertires($grade_item, $grading);
+
+  $grading = new stdClass;
+   if (!empty($userid)){
+     $grading[itemname] => 'Quotes Contributions';
+     $grading[iteminfo] => '';
+     $grading[itemnumber] => '';
+     $grading[outcomeid] => 1;
+     $grading[cmid] => 0;
+     $grading[id] => 0;
+     $grading[courseid] => 2;
+     $grading[aggregationcoef] => 0;
+   }
+   $grade_item->itemnuber = $uniqueitemnumber;
+
+   $outcome = grade_outcome::fetch(array('id' =>$outcomeid));
+   $grade_item->gradetype = GRADE_TYPE_SCALE;
+   $grade_item->scaleid = $outcome->scaleid;
+   $grade_item->insert();
+
+   if($item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$grade_item->itemmodule, 'iteminstance'=>$grade_item->iteminstance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))){
+     $grade_item->set_parent($iteminstance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))){
+     $grade_item->move_after_sortorder($item->sortorder);
+     }
+
+  if(empty($CFG->enableoutcomes)){
+    return;
+  }
+
+  require_once($CFG->libdir. '/gradelib.php');
+
+  $data = array();
+  $grading_info = grade_get_grades($courseid, 'mod' $modtype, $modinstance->id, $userid);
+
+  if(!empty($grading_info->outcomes)){
+     foreach($grading_info->outcomes as $n=>$old){
+       $data[$n] = 2;
+     }
+  }
+
+  if (count($data) > 0){
+    grade_update_outcomes('mod/' .$modtype, $courseid, 'mod', $modtype, $modinstance->id, $userid, $data);
+  }
+
+   return $grading;
+   */
 }

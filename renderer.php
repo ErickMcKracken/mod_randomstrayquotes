@@ -39,7 +39,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
               $content .= html_writer::start_span('mod_randomstrayquotes_category') .  format_date_time($category->time_added) . html_writer::end_span();
               $content .= html_writer::end_tag('td');
               $content .= html_writer::start_tag('td', array('class' => 'category_list'));
-              $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'headingimage'));
+              $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'author-picture-for-list'));
               $content .= html_writer::empty_tag('br');
               $content .= html_writer::start_span('mod_randomstrayquotes_category') .  get_user_name($category->user_id) . html_writer::end_span();
               $content .= html_writer::end_tag('td');
@@ -118,7 +118,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
           $userpix =  get_user_image($quote->user_id, $courseid);
           $content .= html_writer::start_tag('tr', array('class' => 'quote_list'));
           $content .= html_writer::start_tag('td', array('class' => 'author_list'));
-          $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'headingimage'));
+          $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'author-picture-for-list'));
           $content .= html_writer::empty_tag('br');
           $content .= html_writer::start_span('quote-display') .  $authorname . html_writer::end_span();
           $content .= html_writer::end_tag('td');
@@ -134,7 +134,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
           }
           $content .= html_writer::end_tag('td');
           $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
-          $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'headingimage'));
+          $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'profile-picture-author-list'));
           $content .= html_writer::empty_tag('br');
           $content .= html_writer::start_span('quote-display') .  get_user_name($quote->user_id) . html_writer::end_span();
           $content .= html_writer::end_tag('td');
@@ -207,7 +207,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
                 $timeupdated = format_date_time($contribution->time_updated);
                 $content .= html_writer::start_tag('tr', array('class' => 'quote_list'));
                 $content .= html_writer::start_tag('td', array('class' => 'author_list'));
-                $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'headingimage'));
+                $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'author-picture-for-list'));
                 $content .= html_writer::empty_tag('br');
                 $content .= html_writer::start_span('quote-display') .  $authorname . html_writer::end_span();
                 $content .= html_writer::end_tag('td');
@@ -276,7 +276,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
           $userpix =  get_user_image($contributor->user_id, $courseid);
           $content .= html_writer::start_tag('tr', array('class' => 'contributors_list'));
           $content .= html_writer::start_tag('td', array('class' => 'contributors_list'));
-          $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'headingimage'));
+          $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'profile-picture-author-list'));
           $content .= html_writer::empty_tag('br');
           $content .= html_writer::start_span('contributor-display') .  get_user_name($contributor->user_id) . html_writer::end_span();
           $content .= html_writer::end_tag('td');
@@ -323,19 +323,19 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
       $content .= html_writer::start_tag('table', array('class' => 'table table-striped'));
       $content .= html_writer::start_tag('tr', array('class' => 'author_list_header_row'));
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-      $content .= html_writer::start_span('author-display') .  'Author Name' . html_writer::end_span();
+      $content .= html_writer::start_span('author-list-header-label') .  'Author Name' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-      $content .= html_writer::start_span('author-display') .  'Time Added' . html_writer::end_span();
+      $content .= html_writer::start_span('author-list-header-label') .  'Time Added' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-      $content .= html_writer::start_span('author-display') .  'Added by' . html_writer::end_span();
+      $content .= html_writer::start_span('author-list-header-label') .  'Added by' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-      $content .= html_writer::start_span('author-display') .  'Time Updated' . html_writer::end_span();
+      $content .= html_writer::start_span('author-list-header-label') .  'Time Updated' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-      $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
+      $content .= html_writer::start_span('author-list-header-label') .  '&nbsp;' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
       $content .= html_writer::end_tag('td');
 
@@ -348,30 +348,30 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
           $timeadded = format_date_time($author->time_added);
           $timeupdated = format_date_time($author->time_updated);
           $userpix =  get_user_image($author->user_id, $courseid);
-          $content .= html_writer::start_tag('tr', array('class' => 'author_list'));
-          $content .= html_writer::start_tag('td', array('class' => 'author_list'));
-          $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'headingimage'));
+          $content .= html_writer::start_tag('tr', array('class' => 'author_list_details_cell'));
+          $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
+          $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'profile-picture-author-list'));
           $content .= html_writer::empty_tag('br');
-          $content .= html_writer::start_span('author-display') .  $authorname . html_writer::end_span();
+          $content .= html_writer::start_span('author-details-label') .  $authorname . html_writer::end_span();
           $content .= html_writer::end_tag('td');
-          $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
+          $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
           if(isset($author->time_added)){
-              $content .= html_writer::start_span('author-display') .  $timeadded . html_writer::end_span();
+              $content .= html_writer::start_span('author-details-label') .  $timeadded . html_writer::end_span();
           }
           $content .= html_writer::end_tag('td');
 
-        $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
-        $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'headingimage'));
+        $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
+        $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'profile-picture-author-list'));
         $content .= html_writer::empty_tag('br');
-        $content .= html_writer::start_span('author-display') . get_user_name($author->user_id) . html_writer::end_span();
+        $content .= html_writer::start_span('author-details-label') . get_user_name($author->user_id) . html_writer::end_span();
         $content .= html_writer::end_tag('td');
 
         $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
         if(isset($author->time_updated)){
-            $content .= html_writer::start_span('author-display') .  $timeupdated . html_writer::end_span();
+            $content .= html_writer::start_span('author-details-label') .  $timeupdated . html_writer::end_span();
         }
         $content .= html_writer::end_tag('td');
-        $content .= html_writer::start_tag('td', array('class' => 'author_list'));
+        $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
         $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_author.php', array('authorid' => $author->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
         $content .= html_writer::end_tag('td');
         $content .= html_writer::end_tag('tr');
@@ -442,7 +442,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
           }
           $content .= html_writer::end_tag('td');
           $content .= html_writer::start_tag('td', array('class' => 'category_list'));
-          $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'headingimage'));
+          $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'profile-picture-author-list'));
           $content .= html_writer::empty_tag('br');
           $content .= html_writer::start_span('category-display') .  get_user_name($category->user_id) . html_writer::end_span();
           $content .= html_writer::end_tag('td');
@@ -465,44 +465,44 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
 
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-         $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
+         $content .= html_writer::start_span('author-list-header-label') .  '&nbsp;' . html_writer::end_span();
          $content .= html_writer::end_tag('th');
          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-         $content .= html_writer::start_span('author-display') .  'Author' . html_writer::end_span();
+         $content .= html_writer::start_span('author-list-header-label') .  'Author' . html_writer::end_span();
          $content .= html_writer::end_tag('th');
          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-         $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
+         $content .= html_writer::start_span('author-list-header-label') .  '&nbsp;' . html_writer::end_span();
          $content .= html_writer::end_tag('th');
          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-         $content .= html_writer::start_span('author-display') .  'Added by' . html_writer::end_span();
+         $content .= html_writer::start_span('author-list-header-label') .  'Added by' . html_writer::end_span();
          $content .= html_writer::end_tag('th');
          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-         $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
+         $content .= html_writer::start_span('author-list-header-label') .  '&nbsp;' . html_writer::end_span();
          $content .= html_writer::end_tag('th');
          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-         $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
+         $content .= html_writer::start_span('author-list-header-label') .  '&nbsp;' . html_writer::end_span();
          $content .= html_writer::end_tag('th');
          foreach ($arr_authors as $author){
               $courseid = $author->course_id;
               $authorpix =  get_image($author->id, $courseid);
               $userid = $author->user_id;
               $userpix =  get_user_image($author->user_id, $courseid);
-              $content .= html_writer::start_tag('tr', array('class' => 'author_list'));
-              $content .= html_writer::start_tag('td', array('class' => 'author_list'));
-              $content .= html_writer::start_span('author-display') .  $author->id . html_writer::end_span();
+              $content .= html_writer::start_tag('tr', array('class' => 'author_list_details_cell'));
+              $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
+              $content .= html_writer::start_span('author-details-label') .  $author->id . html_writer::end_span();
               $content .= html_writer::end_tag('td');
-              $content .= html_writer::start_tag('td', array('class' => 'author_list'));
-              $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'headingimage'));
+              $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
+              $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'profile-picture-author-list'));
               $content .= html_writer::end_tag('td');
-              $content .= html_writer::start_tag('td', array('class' => 'author_list'));
-              $content .= html_writer::start_span('author-display') .  $author->author_name . html_writer::end_span();
+              $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
+              $content .= html_writer::start_span('author-details-label') .  $author->author_name . html_writer::end_span();
               $content .= html_writer::end_tag('td');
-              $content .= html_writer::start_tag('td', array('class' => 'author_list'));
-              $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'headingimage'));
+              $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
+              $content .= html_writer::empty_tag('img', array('src'=> $userpix, 'alt'=>'', 'class'=>'profile-picture-author-list'));
               $content .= html_writer::empty_tag('br');
-              $content .= html_writer::start_span('author-display') .  get_user_name($author->user_id) . html_writer::end_span();
+              $content .= html_writer::start_span('author-details-label') .  get_user_name($author->user_id) . html_writer::end_span();
               $content .= html_writer::end_tag('td');
-              $content .= html_writer::start_tag('td', array('class' => 'author_list'));
+              $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
               $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_author.php', array('authorid' => $author->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
               $content .= html_writer::end_tag('td');
               $content .= html_writer::end_tag('tr');
