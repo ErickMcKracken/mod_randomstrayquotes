@@ -58,6 +58,15 @@ $capabilities = array(
      )
   ),
 
+  'mod/randomstrayquotes:grade'=> array(
+    'captype' => 'write',
+    'contextlevel' => CONTEXT_MODULE,
+    'archetypes' => array(
+        'editingteacher' => CAP_ALLOW,
+        'manager' => CAP_ALLOW
+     )
+  ),
+
     'mod/randomstrayquotes:addinstance' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',

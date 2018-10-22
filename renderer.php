@@ -2,7 +2,7 @@
 require_once("$CFG->dirroot/mod/randomstrayquotes/locallib.php");
 defined('MOODLE_INTERNAL') || die();
 require_login();
-
+require_once($CFG->dirroot . '/mod/randomstrayquotes/db/access.php');
 class mod_randomstrayquotes_renderer extends plugin_renderer_base {
 
     function display_categories($arr_categories){
@@ -152,19 +152,33 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         return $content;
     }
 
-    function display_list_of_contributions($arr_contributions, $courseid, $userid){
+    function display_list_of_contributions($arr_contributions, $courseid, $userid, $cm, $disable_grading_button){
+      global $USER;
+
+      $context = context_module::instance($cm->id);
+      if ($disable_grading_button == true) {
+          $content = html_writer::start_tag('div', array('class' => 'alert alert-danger', 'role' => 'alert')) .  ' <b>The Grading Button is Absent Because you Have More than One Instance of this Plugin with the Grading Option Activated in this Course. </b> If you want to use more than one instance of this plugin in the same course make sure only one of them is gradable.' . html_writer::end_tag('div');
+          $content .= html_writer::start_tag('table', array('class' => 'table table-striped'));
+      }else{
+          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
+      }
 
       // Navigation buttons
-      $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
       $content .= html_writer::start_tag('tr', array('class' => 'author_list_header_row'));
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
       $content .= html_writer::end_tag('th');
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
       $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/list_quotes.php', array('courseid' => $courseid, 'userid' => $userid)), get_string('Listofquotes', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
       $content .= html_writer::end_tag('th');
-      $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-      $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/grade.php', array('id' => $courseid, 'userid' => $userid)), get_string('Gradethiscontributor', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
-      $content .= html_writer::end_tag('th');
+      // If there is more than one instance of the pluging with the grading option activated, the grading button is hidden
+      if ($disable_grading_button == false) {
+        //Those who cannot attribute grades cannot see this button
+        if (has_capability('mod/randomstrayquotes:grade', $context, $USER->id, $doanything = true, $errormessage='nopermissions')){
+          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+          $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/grade.php', array('id' => $cm->id, 'userid' => $userid)), get_string('Gradethiscontributor', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true', 'aria-disabled' => 'true'));
+          $content .= html_writer::end_tag('th');
+          }
+      }
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
       $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/contributors_list.php', array('courseid' => $courseid, 'userid' => $userid)), get_string('Contributorslist', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
       $content .= html_writer::end_tag('th');
@@ -511,6 +525,13 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
          return $content;
     }
 
+    function display_error_message($message){
+
+      $content = html_writer::start_tag('div', array('class' => 'alert alert-danger', 'role' => 'alert')) .  $message . html_writer::end_tag('div');
+
+      return $content;
+    }
+
     function display_quotes($arr_quotes, $DB){
         global $COURSE, $USER;
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
@@ -539,4 +560,5 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
          $content .= html_writer::end_tag('table');
          return $content;
     }
+
 }

@@ -121,6 +121,15 @@ defined('MOODLE_INTERNAL') || die();
    return $values[0];
  }
 
+ function nbr_grading_instances($courseid){
+  global $DB;
+   $nbr_grading_instances_query = "Select count(*) from {randomstrayquotes} where course = $courseid AND grade <> 0";
+   $nbr_grading_instances = $DB->get_records_sql($nbr_grading_instances_query);
+   $values = array_keys($nbr_grading_instances);
+
+   return $values[0];
+ }
+
   function get_user_name($userid){
      global $DB;
      $queryusername = "Select * from {user} where id= $userid";

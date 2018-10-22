@@ -40,10 +40,10 @@ global $USER;
 if ($id) {
     $cm         = get_coursemodule_from_id('randomstrayquotes', $id, 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $newmodule  = $DB->get_record('randomstrayquotes', array('id' => $cm->instance), '*', MUST_EXIST);
+    $randomstrayquotes  = $DB->get_record('randomstrayquotes', array('id' => $cm->instance), '*', MUST_EXIST);
 } else if ($r) {
-    $newmodule  = $DB->get_record('randomstrayquotes', array('id' => $r), '*', MUST_EXIST);
-    $course     = $DB->get_record('randomstrayquotes', array('id' => $randomstrayquotes->course), '*', MUST_EXIST);
+    $randomstrayquotes  = $DB->get_record('randomstrayquotes', array('id' => $r), '*', MUST_EXIST);
+    $course     = $DB->get_record('course', array('id' => $randomstrayquotes->course), '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('randomstrayquotes', $randomstrayquotes->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');

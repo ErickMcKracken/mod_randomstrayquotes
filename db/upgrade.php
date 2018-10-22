@@ -41,6 +41,18 @@ function xmldb_randomstrayquotes_upgrade($oldversion) {
     global $DB;
 
  $dbman = $DB->get_manager();
+
+if ($oldversion < 2018101116){
+     $table = new xmldb_table('randomstrayquotes_categories');
+     $field =
+       new xmldb_field('instance_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null);
+
+      if (!$dbman->field_exists($table, $field)){
+        $dbman->add_field($table, $field);
+      }
+
+}
+
   if ($oldversion < 2018083114) {
     //define the fields to be added to randomstrayquotes_authors
      $table = new xmldb_table('randomstrayquotes_authors');

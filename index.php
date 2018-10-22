@@ -56,13 +56,13 @@ $PAGE->set_pagelayout('incourse');
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strname);
 /*
-if (! $newmodules = get_all_instances_in_course('randomstrayquotes', $course)) {
-    notice(get_string('nonewmodules', 'randomstrayquotes'), new moodle_url('/course/view.php', array('id' => $course->id)));
+if (! $randomstrayquotes = get_all_instances_in_course('randomstrayquotes', $course)) {
+    notice(get_string('nonrandomstrayquotes', 'randomstrayquotes'), new moodle_url('/course/view.php', array('id' => $course->id)));
 
 if (! $randomstrayquotes = get_all_instances_in_course('randomstrayquotes', $course)) {
     notice(get_string('nonrandomstrayquotes', 'randomstrayquotes'), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
-*/ 
+*/
 if (! $randomstrayquotes = get_all_instances_in_course("randomstrayquotes", $course)) {
     notice(get_string('thereareno', 'moodle', $strnames), "../../course/view.php?id=$course->id");
     die;

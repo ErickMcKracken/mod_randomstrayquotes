@@ -89,7 +89,6 @@ if ($randomstrayquotes->intro) {
 }
 
 
-
 if ($randomstrayquotes->intro) {
     echo $OUTPUT->box(format_module_intro('randomstrayquotes', $randomstrayquotes, $cm->id), 'generalbox mod_introbox', 'newmoduleintro');
 }
@@ -97,7 +96,20 @@ if ($randomstrayquotes->intro) {
 // Replace the following lines with you own code.
 echo $OUTPUT->heading('Manage Quotes');
 
- #Quotes Listing
+// We check how many instance of this plugin have the grading option activated
+$nbr_grading_instances_query = "Select count(*) from {randomstrayquotes} where course = $course->id and grade <> 0";
+$nbr_grading_instances = $DB->get_records_sql($nbr_grading_instances_query);
+$values = array_keys($nbr_grading_instances);
+
+// If there is more than one instance of this plugin with grading option activated we display a waning that the grading will be deactivated
+if ($values[0] > 1){
+  $message = "There is currently more than one instance of this plugin with the grading option activated.  This plugin can have multiple instances in the same course but only one can be graded. The grading option will be deactivated until the situation is corrected.";
+  $renderer = $PAGE->get_renderer('mod_randomstrayquotes');
+  $content = $renderer->display_error_message($message);
+  echo ($content);
+}
+
+// Display the complete Quotes Listing
         $selectArray = array();
         $quotesquery = "Select * from {randomstrayquotes_quotes} where course_id = $course->id and visible = 1";
         $quotes_arr = $DB->get_records_sql($quotesquery);
