@@ -61,6 +61,7 @@ function xmldb_randomstrayquotes_upgrade($oldversion) {
     // Moodle v2.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+
     if ($oldversion < 2013121900) {
         // Define table assignment_upgrade to be created.
         $table = new xmldb_table('randomstrayquotes_upgrade');
@@ -94,9 +95,28 @@ function xmldb_randomstrayquotes_upgrade($oldversion) {
             mod_randomstrayquotes_pending_upgrades_notification($count);
         }
 
+        if ($oldversion < 2018101119) {
+          //define the fields to be added to randomstrayquotes_authors
+           $table = new xmldb_table('randomstrayquotes');
+           $fields = [
+             new xmldb_field('students_add_quotes', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null, null),
+             new xmldb_field('students_add_authors', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null, null),
+             new xmldb_field('students_add_categories', XMLDB_TYPE_INTEGER,'20', XMLDB_UNSIGNED, null, null, null, null)
+           ];
+
+           foreach ($fields as $field) {
+             if (!$dbman->field_exists($table, $field)){
+               $dbman->add_field($table, $field);
+             }
+           }
+        }
+
+
         // Assignment savepoint reached.
         upgrade_mod_savepoint(true, 2013121900, 'randomstrayquotes');
     }
+
+
 
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
@@ -112,4 +132,3 @@ function xmldb_randomstrayquotes_upgrade($oldversion) {
 
     return true;
 }
-

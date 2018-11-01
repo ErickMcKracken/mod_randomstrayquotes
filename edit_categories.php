@@ -1,16 +1,17 @@
 <?php
-
+global $CFG, $DB, $PAGE, $COURSE, $USER;
 require_once('../../config.php');
 defined('MOODLE_INTERNAL') || die();
 require_login();
-global $CFG, $DB, $PAGE, $COURSE, $USER;
 
+// Page settings
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title('Edit Categories');
 $PAGE->set_heading('Form Edit Categories');
 $PAGE->set_url($CFG->wwwroot.'/mod/randomstrayquotes/edit_category.php');
 
+// We catch the parameters
 if (isset($_GET['catid'])){
    $category_id = required_param('catid', PARAM_INT);
  }else{
@@ -38,12 +39,15 @@ $customdata['catid'] = $category_id ;
 // We catch the course id in the parameter in the adress bar
 $customdata['courseid'] = $courseid;
 
+// We load the form
 $form = new \mod_randomstrayquotes\forms\editCategory(null, $customdata);
 
+// Redirection for the cancel button
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_categories.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
+// Destruction of a category
 if ($form->is_deleted()){
   try{
       $transaction = $DB->start_delegated_transaction();
@@ -60,8 +64,8 @@ if ($form->is_deleted()){
       redirect($url, 'Transaction successful', 3);
 }
 
+// Update of the informations of a category
 if ($data = $form->get_data()) {
-
   try{
       $transaction = $DB->start_delegated_transaction();
       $category = new stdClass();
@@ -72,7 +76,6 @@ if ($data = $form->get_data()) {
       // We update the category
       $DB->update_record('randomstrayquotes_categories', $category, $returnid = true, $bulk = false);
       $data = NULL;
-
       $url= new moodle_url('/mod/randomstrayquotes/edit_categories.php', ['courseid' => $courseid,  'userid' => $userid, 'catid' => $category_id ]);
       $transaction->allow_commit();
       }

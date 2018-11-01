@@ -15,74 +15,98 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the newmodule module
- *
- * Sometimes, changes between versions involve alterations to database
- * structures and other major things that may break installations. The upgrade
- * function in this file will attempt to perform all the necessary actions to
- * upgrade your older installation to the current version. If there's something
- * it cannot do itself, it will tell you what you need to do.  The commands in
- * here will all be database-neutral, using the functions defined in DLL libraries.
- *
- * @package    mod_randomstrayquotes
- * @copyright  2018 Eric Frenette <frenette.eric@uqam.ca>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+* This file keeps track of upgrades to the newmodule module
+*
+* Sometimes, changes between versions involve alterations to database
+* structures and other major things that may break installations. The upgrade
+* function in this file will attempt to perform all the necessary actions to
+* upgrade your older installation to the current version. If there's something
+* it cannot do itself, it will tell you what you need to do.  The commands in
+* here will all be database-neutral, using the functions defined in DLL libraries.
+*
+* @package    mod_randomstrayquotes
+* @copyright  2018 Eric Frenette <frenette.eric@uqam.ca>
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Execute newmodule upgrade from the given old version
- *
- * @param int $oldversion
- * @return bool
- */
+* Execute newmodule upgrade from the given old version
+*
+* @param int $oldversion
+* @return bool
+*/
 function xmldb_randomstrayquotes_upgrade($oldversion) {
-    global $DB;
+  global $DB;
 
- $dbman = $DB->get_manager();
+  $dbman = $DB->get_manager();
 
-if ($oldversion < 2018101116){
-     $table = new xmldb_table('randomstrayquotes_categories');
-     $field =
-       new xmldb_field('instance_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null);
 
-      if (!$dbman->field_exists($table, $field)){
-        $dbman->add_field($table, $field);
-      }
 
-}
+  if ($oldversion < 2018101116){
+    $table = new xmldb_table('randomstrayquotes_categories');
+    $field =
+    new xmldb_field('instance_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null);
+
+    if (!$dbman->field_exists($table, $field)){
+      $dbman->add_field($table, $field);
+    }
+
+  }
 
   if ($oldversion < 2018083114) {
     //define the fields to be added to randomstrayquotes_authors
-     $table = new xmldb_table('randomstrayquotes_authors');
-     $fields = [
-       new xmldb_field('time_added', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
-       new xmldb_field('time_updated', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
-       new xmldb_field('user_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null)
-     ];
+    $table = new xmldb_table('randomstrayquotes_authors');
+    $fields = [
+      new xmldb_field('time_added', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
+      new xmldb_field('time_updated', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
+      new xmldb_field('user_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null)
+    ];
 
-     foreach ($fields as $field) {
-       if (!$dbman->field_exists($table, $field)){
-         $dbman->add_field($table, $field);
-       }
-     }
-
-     //define the fields to be added to randomstrayquotes_categories
-      $table = new xmldb_table('randomstrayquotes_categories');
-      $fields = [
-        new xmldb_field('time_added', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
-        new xmldb_field('time_updated', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
-        new xmldb_field('user_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null)
-      ];
-
-      foreach ($fields as $field) {
-        if (!$dbman->field_exists($table, $field)){
-          $dbman->add_field($table, $field);
-        }
+    foreach ($fields as $field) {
+      if (!$dbman->field_exists($table, $field)){
+        $dbman->add_field($table, $field);
       }
-      upgrade_mod_savepoint(true, 2018083114, 'randomstrayquotes');
+    }
   }
 
-    return true;
+  if ($oldversion < 2018052990){
+    //define the fields to be added to randomstrayquotes_categories
+    $table = new xmldb_table('randomstrayquotes_categories');
+    $fields = [
+      new xmldb_field('time_added', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
+      new xmldb_field('time_updated', XMLDB_TYPE_CHAR, 255, XMLDB_UNSIGNED, null, null, null, null),
+      new xmldb_field('user_id', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null)
+    ];
+
+    foreach ($fields as $field) {
+      if (!$dbman->field_exists($table, $field)){
+        $dbman->add_field($table, $field);
+      }
+    }
+
+
+  }
+
+  if ($oldversion < 2018110100) {
+    //define the fields to be added to randomstrayquotes_authors
+    $table = new xmldb_table('randomstrayquotes');
+    $fields = [
+      new xmldb_field('students_add_quotes', XMLDB_TYPE_INTEGER, 20, XMLDB_UNSIGNED, null, null, null, null),
+      new xmldb_field('students_add_authors', XMLDB_TYPE_INTEGER, 20, XMLDB_UNSIGNED, null, null, null, null),
+      new xmldb_field('students_add_categories', XMLDB_TYPE_INTEGER,20, XMLDB_UNSIGNED, null, null, null, null)
+    ];
+
+    foreach ($fields as $field) {
+      if (!$dbman->field_exists($table, $field)){
+        $dbman->add_field($table, $field);
+      }
+    }
+  }
+
+  upgrade_mod_savepoint(true, 2018110100, 'randomstrayquotes');
+
+
+  return true;
 }

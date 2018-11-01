@@ -82,6 +82,7 @@ $capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
+            'student' => CAP_ALLOW,
             'guest' => CAP_ALLOW,
             'user' => CAP_ALLOW,
         )

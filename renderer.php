@@ -6,11 +6,8 @@ require_once($CFG->dirroot . '/mod/randomstrayquotes/db/access.php');
 class mod_randomstrayquotes_renderer extends plugin_renderer_base {
 
     function display_categories($arr_categories){
-
+         global $USER;
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
-         $content .= html_writer::start_tag('th', array('class' => 'category_list_header_cell'));
-         $content .= html_writer::start_span('author-display') .  '&nbsp;' . html_writer::end_span();
-         $content .= html_writer::end_tag('th');
          $content .= html_writer::start_tag('th', array('class' => 'category_list_header_cell'));
          $content .= html_writer::start_span('author-display') .  'Category' . html_writer::end_span();
          $content .= html_writer::end_tag('th');
@@ -30,9 +27,6 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
               $userpix =  get_user_image($category->user_id, $courseid);
               $content .= html_writer::start_tag('tr', array('class' => 'category_list'));
               $content .= html_writer::start_tag('td', array('class' => 'category_list'));
-              $content .= html_writer::start_span('mod_randomstrayquotes_category') .  $category->id . html_writer::end_span();
-              $content .= html_writer::end_tag('td');
-              $content .= html_writer::start_tag('td', array('class' => 'category_list'));
               $content .= html_writer::start_span('mod_randomstrayquotes_category') .  $category->category_name . html_writer::end_span();
               $content .= html_writer::end_tag('td');
               $content .= html_writer::start_tag('td', array('class' => 'category_list'));
@@ -44,7 +38,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
               $content .= html_writer::start_span('mod_randomstrayquotes_category') .  get_user_name($category->user_id) . html_writer::end_span();
               $content .= html_writer::end_tag('td');
               $content .= html_writer::start_tag('td', array('class' => 'category_list'));
-              $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('catid' => $catid, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+              if ($USER->id == $userid){
+                  $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('catid' => $catid, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+              }
               $content .= html_writer::end_tag('tr');
          }
          $content .= html_writer::end_tag('table');
@@ -53,6 +49,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
 
 
     function display_list_of_quotes($arr_quotes, $userid, $courseid){
+      global $USER;
 
     // Navigation buttons
     $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
@@ -144,7 +141,10 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
           }
           $content .= html_writer::end_tag('td');
           $content .= html_writer::start_tag('td', array('class' => 'author_list'));
-          $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_quote.php', array('quoteid' => $quote->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+          // Only the creator of the quote can edit it
+          if ($USER->id == $userid){
+              $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_quote.php', array('quoteid' => $quote->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+          }
           $content .= html_writer::end_tag('td');
           $content .= html_writer::end_tag('tr');
         }
@@ -171,14 +171,16 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
       $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/list_quotes.php', array('courseid' => $courseid, 'userid' => $userid)), get_string('Listofquotes', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
       $content .= html_writer::end_tag('th');
       // If there is more than one instance of the pluging with the grading option activated, the grading button is hidden
-      if ($disable_grading_button == false) {
+
+    #  if ($disable_grading_button == false) {
         //Those who cannot attribute grades cannot see this button
-        if (has_capability('mod/randomstrayquotes:grade', $context, $USER->id, $doanything = true, $errormessage='nopermissions')){
-          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-          $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/grade.php', array('id' => $cm->id, 'userid' => $userid)), get_string('Gradethiscontributor', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true', 'aria-disabled' => 'true'));
-          $content .= html_writer::end_tag('th');
-          }
-      }
+      #  if (has_capability('mod/randomstrayquotes:grade', $context, $USER->id, $doanything = true, $errormessage='nopermissions')){
+      #    $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
+      #    $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/list_of_contributions.php', array('id' => $cm->id, 'userid' => $userid, 'grading' => 'true', 'courseid' => $courseid)), get_string('Gradethiscontributor', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true', 'aria-disabled' => 'true'));
+      #    $content .= html_writer::end_tag('th');
+      #    }
+
+    #  }
       $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
       $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/contributors_list.php', array('courseid' => $courseid, 'userid' => $userid)), get_string('Contributorslist', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
       $content .= html_writer::end_tag('th');
@@ -281,9 +283,11 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
       $content .= html_writer::start_tag('th', array('class' => 'contributor_list_header_cell'));
       $content .= html_writer::start_span('author-display') .  'List of Contributions' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
+      /*
       $content .= html_writer::start_tag('th', array('class' => 'contributor_list_header_cell'));
       $content .= html_writer::start_span('author-display') .  'Grade' . html_writer::end_span();
       $content .= html_writer::end_tag('th');
+      */
       $content .= html_writer::end_tag('td');
       // Table with list of contributors
       foreach ($arr_contributors as $contributor){
@@ -301,9 +305,11 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
           $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/list_of_contributions.php', array('courseid' => $courseid, 'userid' => $contributor->user_id)), get_string('Contributions', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
           $content .= html_writer::end_tag('td');
           $content .= html_writer::end_tag('td');
+          /*
           $content .= html_writer::start_tag('td', array('class' => 'contributor_list'));
           $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/grade.php', array('id' => $courseid, 'userid' => $contributor->user_id)), get_string('Grade', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
           $content .= html_writer::end_tag('td');
+          */
           $content .= html_writer::end_tag('td');
         }
         $content .= html_writer::end_tag('table');
@@ -311,6 +317,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     }
 
     function display_list_of_authors($arr_authors, $courseid, $userid){
+      global $USER;
       // Navigation buttons
       $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
       $content .= html_writer::start_tag('tr', array('class' => 'author_list_header_row'));
@@ -386,7 +393,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
         }
         $content .= html_writer::end_tag('td');
         $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
-        $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_author.php', array('authorid' => $author->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+        if ($USER->id == $userid) {
+            $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_author.php', array('authorid' => $author->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+        }
         $content .= html_writer::end_tag('td');
         $content .= html_writer::end_tag('tr');
       }
@@ -395,7 +404,7 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     }
 
     function display_list_of_categories($arr_categories, $courseid, $userid){
-
+      global $USER;
       // Navigation buttons
       $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
       $content .= html_writer::start_tag('tr', array('class' => 'author_list_header_row'));
@@ -466,7 +475,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
           }
           $content .= html_writer::end_tag('td');
           $content .= html_writer::start_tag('td', array('class' => 'category_list'));
-          $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('catid' => $category->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+          if ($USER->id == $userid){
+              $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_categories.php', array('catid' => $category->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+          }
           $content .= html_writer::end_tag('td');
           $content .= html_writer::end_tag('tr');
         }
@@ -475,12 +486,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
     }
 
     function display_authors($arr_authors){
-           global $COURSE;
+           global $COURSE, $USER;
 
          $content = html_writer::start_tag('table', array('class' => 'table table-striped'));
-         $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
-         $content .= html_writer::start_span('author-list-header-label') .  '&nbsp;' . html_writer::end_span();
-         $content .= html_writer::end_tag('th');
          $content .= html_writer::start_tag('th', array('class' => 'author_list_header_cell'));
          $content .= html_writer::start_span('author-list-header-label') .  'Author' . html_writer::end_span();
          $content .= html_writer::end_tag('th');
@@ -503,9 +511,6 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
               $userpix =  get_user_image($author->user_id, $courseid);
               $content .= html_writer::start_tag('tr', array('class' => 'author_list_details_cell'));
               $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
-              $content .= html_writer::start_span('author-details-label') .  $author->id . html_writer::end_span();
-              $content .= html_writer::end_tag('td');
-              $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
               $content .= html_writer::empty_tag('img', array('src'=> $authorpix, 'alt'=>'', 'class'=>'profile-picture-author-list'));
               $content .= html_writer::end_tag('td');
               $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
@@ -517,7 +522,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
               $content .= html_writer::start_span('author-details-label') .  get_user_name($author->user_id) . html_writer::end_span();
               $content .= html_writer::end_tag('td');
               $content .= html_writer::start_tag('td', array('class' => 'author_list_details_cell'));
-              $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_author.php', array('authorid' => $author->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+              if ($USER->id == $userid){
+                $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_author.php', array('authorid' => $author->id, 'courseid' => $courseid, 'userid' => $userid)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+              }
               $content .= html_writer::end_tag('td');
               $content .= html_writer::end_tag('tr');
          }
@@ -539,10 +546,8 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
               $author = get_author($DB, $quote->author_id);
               $category = get_category($DB, $quote->category);
               $quoteid =  $quote->id ;
+              $userid = $quote->user_id;
               $content .= html_writer::start_tag('tr', array('class' => 'quotes_list'));
-              $content .= html_writer::start_tag('td', array('class' => 'quotes_list'));
-              $content .= html_writer::start_span('quote-display') .  $quote->id . html_writer::end_span();
-              $content .= html_writer::end_tag('td');
               $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
               $content .= html_writer::start_span('quote-display') .  $quote->quote . html_writer::end_span();
               $content .= html_writer::end_tag('td');
@@ -553,7 +558,9 @@ class mod_randomstrayquotes_renderer extends plugin_renderer_base {
               $content .= html_writer::start_span('quote-display') . $category->category_name   . html_writer::end_span();
               $content .= html_writer::end_tag('td');
               $content .= html_writer::start_tag('td', array('class' => 'quote_list'));
-              $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_/quotes.php', array('quoteid' => $quoteid, 'courseid' => $COURSE->id, 'userid' => $USER->id)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+              if ($USER->id == $userid){
+                  $content .= html_writer::link(new moodle_url('/mod/randomstrayquotes/edit_/quotes.php', array('quoteid' => $quoteid, 'courseid' => $COURSE->id, 'userid' => $USER->id)), get_string('Edit', 'randomstrayquotes'), array('class'=> 'btn btn-secondary', 'role'=> 'button', 'aria-pressed'=>'true'));
+              }
               $content .= html_writer::end_tag('td');
               $content .= html_writer::end_tag('tr');
          }

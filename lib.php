@@ -74,13 +74,15 @@ function randomstrayquotes_supports($feature) {
  * @param mod_newmodule_mod_form $mform The form instance itself (if needed)
  * @return int The id of the newly inserted newmodule record
  */
-function randomstrayquotes_add_instance(stdClass $randomstrayquotes, mod_randomstrayquotes_mod_form $mform = null) {
+function randomstrayquotes_add_instance(stdclass $randomstrayquotes, $mform = null) {
     global $DB;
 
     $randomstrayquotes->timecreated = time();
+    $randomstrayquotes->students_add_quotes = $randomstrayquotes->admin_setting_students_add_quotes;
+    $randomstrayquotes->students_add_authors = $randomstrayquotes->admin_setting_students_add_authors;
+    $randomstrayquotes->students_add_categories = $randomstrayquotes->admin_setting_students_add_categories;
 
     // You may have to add extra stuff in here.
-
     $randomstrayquotes->id = $DB->insert_record('randomstrayquotes', $randomstrayquotes);
 
     randomstrayquotes_grade_item_update($randomstrayquotes);
@@ -99,11 +101,14 @@ function randomstrayquotes_add_instance(stdClass $randomstrayquotes, mod_randoms
  * @param mod_newmodule_mod_form $mform The form instance itself (if needed)
  * @return boolean Success/Fail
  */
-function randomstrayquotes_update_instance($randomstrayquotes, $mform = null) {
+function randomstrayquotes_update_instance(stdclass $randomstrayquotes, $mform =null) {
     global $DB, $CFG;
 
     $randomstrayquotes->timemodified = time();
     $randomstrayquotes->id = $randomstrayquotes->instance;
+    $randomstrayquotes->students_add_quotes = $randomstrayquotes->admin_setting_students_add_quotes;
+    $randomstrayquotes->students_add_authors = $randomstrayquotes->admin_setting_students_add_authors;
+    $randomstrayquotes->students_add_categories = $randomstrayquotes->admin_setting_students_add_categories;
 
     // You may have to add extra stuff in here.
     $result = $DB->update_record('randomstrayquotes', $randomstrayquotes);
@@ -138,7 +143,7 @@ function randomstrayquotes_refresh_events($courseid = 0) {
 
     foreach ($randomstrayquotes as $randomstrayquotes) {
         // Create a function such as the one below to deal with updating calendar events.
-        // newmodule_update_events($newmodule);
+    #     randsomstrayquotes_update_events($randomstrayquotes);
     }
 
     return true;
@@ -406,7 +411,7 @@ function randomstrayquotes_update_grades($randomstrayquotes, $userid = 0, $nulli
       randomstrayquotes_grade_item_update($randomstrayquotes);
     }
 
-    //grade_update('mod/randomstrayquotes', $randomstrayquotes->course, 'mod', 'randomstrayquotes', $randomstrayquotes->id, 0, $grades);
+    grade_update('mod/randomstrayquotes', $randomstrayquotes->course, 'mod', 'randomstrayquotes', $randomstrayquotes->id, 0, $grades);
 }
 
 /* File API */
@@ -571,7 +576,7 @@ function randomstrayquotes_reset_course_form_defaults($course){
 }
 
 function randomstrayquotes_get_user_grades($randomstrayquotes, $userid, $courseid){
-  /*
+/*
   global $CFG, $DB;
   require_once($CFG->dirroot. '/mod/randomstrayquotes/locallib.php');
   $grade_item = new grade_item(array('id'=>0, 'courseid'=>$courseid));
@@ -599,6 +604,8 @@ function randomstrayquotes_get_user_grades($randomstrayquotes, $userid, $coursei
      $grade_item->set_parent($iteminstance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))){
      $grade_item->move_after_sortorder($item->sortorder);
      }
+
+   return $grading;
 
   if(empty($CFG->enableoutcomes)){
     return;

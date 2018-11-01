@@ -1,8 +1,8 @@
 <?php
+global $CFG, $DB, $PAGE, $COURSE, $USER;
 require_once('../../config.php');
 defined('MOODLE_INTERNAL') || die();
 require_login();
-global $CFG, $DB, $PAGE, $COURSE, $USER;
 
 // Configuration of the page
 $PAGE->set_context(context_system::instance());
@@ -57,6 +57,7 @@ if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_authors.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
+// Destruction of an author
 if ($form->is_deleted()){
   try{
       $transaction = $DB->start_delegated_transaction();
@@ -67,7 +68,6 @@ if ($form->is_deleted()){
       $table2 = 'randomstrayquotes_quotes';
       echo('delete');
     #  $DB->delete_records($table2, array('author_id' => $_POST['authorid']));
-
       $url= new moodle_url('/mod/randomstrayquotes/list_authors.php', array('courseid' => $courseid, 'userid' => $USER->id));
       $transaction->allow_commit();
       }

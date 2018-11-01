@@ -38,9 +38,6 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
  */
 class mod_randomstrayquotes_mod_form extends moodleform_mod {
 
-    /**
-     * Defines forms elements
-     */
     public function definition() {
         global $CFG, $COURSE, $DB;
 
@@ -67,21 +64,38 @@ class mod_randomstrayquotes_mod_form extends moodleform_mod {
             $this->add_intro_editor();
         }
 
+        $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
+        $r  = optional_param('r', 0, PARAM_INT);  // ... newmodule instance ID - it should be named as the first character of the module.
+
+        global $USER;
+
+        if ($id) {
+            $cm         = get_coursemodule_from_id('randomstrayquotes', $id, 0, false, MUST_EXIST);
+            $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+            $randomstrayquotes  = $DB->get_record('randomstrayquotes', array('id' => $cm->instance), '*', MUST_EXIST);
+        } else if ($r) {
+            $randomstrayquotes  = $DB->get_record('randomstrayquotes', array('id' => $r), '*', MUST_EXIST);
+            $course     = $DB->get_record('course', array('id' => $randomstrayquotes->course), '*', MUST_EXIST);
+            $cm         = get_coursemodule_from_instance('randomstrayquotes', $randomstrayquotes->id, $course->id, false, MUST_EXIST);
+        }
+
+
         //Students can add quotes?
         $attributes = array();
         $attributesbtn = array();
         $attributesbtn[1] = "class='radio-opt'";
         $attributes[1] = "class='radio-group'";
         $radioarray=array();
-        $radioarray[] = $mform->createElement('radio', 'studentsaddquotes', '', get_string('yes', 'block_strayquotes'), 1, $attributesbtn);
-        $radioarray[] = $mform->createElement('radio', 'studentsaddquotes', '', get_string('no', 'block_strayquotes'), 0, $attributesbtn);
-        $mform->addGroup($radioarray, 'radioar', get_string('studentsaddquotes', 'block_strayquotes'), array(' '), false);
-        if (empty($this->mod->config->studentsaddquotes) || $this->mod->config->studentsaddquotes==1){
-            $mform->setDefault('studentsaddquotes', 1);
+        $radioarray[] = $mform->createElement('radio', 'admin_setting_students_add_quotes', '', get_string('yes', 'mod_randomstrayquotes'), 1, $attributesbtn);
+        $radioarray[] = $mform->createElement('radio', 'admin_setting_students_add_quotes', '', get_string('no', 'mod_randomstrayquotes'), 0, $attributesbtn);
+        $mform->addGroup($radioarray, 'radioar', get_string('studentsaddquotes', 'mod_randomstrayquotes'), array(' '), false);
+
+        if (empty($randosmstrayquotes) || $radomstrayquotes->students_add_quotes == 1){
+            $mform->setDefault('admin_setting_students_add_quotes', 1);
         }else{
-            $mform->setDefault('studentsaddquotes', 0);
+            $mform->setDefault('admin_setting_students_add_uotes', 0);
        }
-        $mform->setType('studentsaddquotes', PARAM_INT);
+        $mform->setType('admin_setting_students_add_quotes', PARAM_INT);
 
         //Students can add authors?
         $attributes = array();
@@ -89,33 +103,31 @@ class mod_randomstrayquotes_mod_form extends moodleform_mod {
         $attributesbtn[1] = "class='radio-opt'";
         $attributes[1] = "class='radio-group'";
         $radioarray=array();
-        $radioarray[] = $mform->createElement('radio', 'studentsaddauthors', '', get_string('yes', 'block_strayquotes'), 1, $attributesbtn);
-        $radioarray[] = $mform->createElement('radio', 'studentsaddauthors', '', get_string('no', 'block_strayquotes'), 0, $attributesbtn);
-        $mform->addGroup($radioarray, 'radioar', get_string('studentsaddauthors', 'block_strayquotes'), array(' '), false);
-        if (empty($this->mod->config->studentsaddauthors) || $this->mod->config->studentsaddauthors==1) {
-            $mform->setDefault('studentsaddauthors', 1);
+        $radioarray[] = $mform->createElement('radio', 'admin_setting_students_add_authors', '', get_string('yes', 'mod_randomstrayquotes'), 1, $attributesbtn);
+        $radioarray[] = $mform->createElement('radio', 'admin_setting_students_add_authors', '', get_string('no', 'mod_randomstrayquotes'), 0, $attributesbtn);
+        $mform->addGroup($radioarray, 'radioar', get_string('studentsaddauthors', 'mod_randomstrayquotes'), array(' '), false);
+        if (empty($randomstrayquotes) || $randomstrayquotes->students_add_authors == 1) {
+            $mform->setDefault('admin_setting_students_add_authors', 1);
         }else{
-            $mform->setDefault('studentsaddauthors', 0);
+            $mform->setDefault('admin_setting_students_add_authors', 0);
         }
-        $mform->setType('studentsaddauthors', PARAM_INT);
+        $mform->setType('admin_setting_students_add_authors', PARAM_INT);
 
         //Students can add categories?
         $attributes = array();
         $attributesbtn = array();
         $attributesbtn[1] = "class='radio-opt'";
         $attributes[1] = "class='radio-group'";
-        $radioarray=array();
-        $radioarray[] = $mform->createElement('radio', 'studentsaddcategories', '', get_string('yes', 'block_strayquotes'), 1, $attributesbtn);
-        $radioarray[] = $mform->createElement('radio', 'studentsaddcategories', '', get_string('no', 'block_strayquotes'), 0, $attributesbtn);
-        $mform->addGroup($radioarray, 'radioar', get_string('studentsaddcategories', 'block_strayquotes'), array(' '), false);
-        if (empty($this->mod->config->studentsaddcategories) || $this->mod->config->studentsaddcategories==1) {
-            $mform->setDefault('studentsaddcategories', 1);
+        $radioarray = [];
+        $radioarray[] = $mform->createElement('radio', 'admin_setting_students_add_categories', '', get_string('yes', 'mod_randomstrayquotes'), 1, $attributesbtn);
+        $radioarray[] = $mform->createElement('radio', 'admin_setting_students_add_categories', '', get_string('no', 'mod_randomstrayquotes'), 0, $attributesbtn);
+        $mform->addGroup($radioarray, 'radioarray', get_string('studentsaddcategories', 'mod_randomstrayquotes'), array(' '), false);
+        if (empty($randomstrayquotes) || $randomstrayquotes->students_add_categories==1) {
+            $mform->setDefault('admin_setting_students_add_categories', 1);
         }else{
-            $mform->setDefault('studentsaddcategories', 0);
+            $mform->setDefault('admin_setting_students_add_categories', 0);
         }
-        $mform->setType('studentsaddcategories', PARAM_INT);
-
-
+        $mform->setType('admin_setting_students_add_categories', PARAM_INT);
 
         // Add standard grading elements.
         $this->standard_grading_coursemodule_elements();

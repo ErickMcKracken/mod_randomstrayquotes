@@ -1,10 +1,10 @@
 <?php
-
+global $CFG, $DB, $PAGE, $COURSE;
 require_once('../../config.php');
 defined('MOODLE_INTERNAL') || die();
 require_login();
-global $CFG, $DB, $PAGE, $COURSE;
 
+// Pages settings
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title('Edit Quote');
@@ -33,14 +33,15 @@ $customdata['quoteid'] = $quoteid ;
 // We catch the course id in the parameter in the adress bar
 $customdata['courseid'] = $courseid;
 
-
 // Instaciation of the form
 $form = new \mod_randomstrayquotes\forms\editQuote(null, $customdata);
 
+// Redirection for the cancel button
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_quotes.php', ['courseid' => $courseid,  'userid' => $USER->id ]));
 }
 
+// Destruction of a quote
 if ($form->is_deleted()){
   try{
       $transaction = $DB->start_delegated_transaction();
@@ -57,8 +58,8 @@ if ($form->is_deleted()){
       redirect($url, 'Transaction successful', 3);
 }
 
+// Update of the informations of a quote
 if ($data = $form->get_data()) {
-
   try{
       $transaction = $DB->start_delegated_transaction();
       $table = 'randomstrayquotes_quotes';
@@ -86,6 +87,7 @@ if ($data = $form->get_data()) {
       redirect($url, 'Transaction successful', 3);
 }
 
+// Display the page
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Edit a quote');
 echo $form->display();

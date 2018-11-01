@@ -1,8 +1,10 @@
 <?php
-require_once('../../config.php');
 global $CFG, $DB, $PAGE, $COURSE, $USER;
+require_once('../../config.php');
 defined('MOODLE_INTERNAL') || die();
 require_login();
+
+// Page settings
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title('Add Quotes');
@@ -31,12 +33,13 @@ $customdata['ctx'] = $ctx;
 // Instaciation of the form
 $form = new \mod_randomstrayquotes\forms\addQuotes(null, $customdata);
 
+// Redirections for the cancel button
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/mod/randomstrayquotes/list_quotes.php', ['courseid' => $course_id, 'userid' => $USER->id]));
 }
 
+// We add a quote
 if ($data = $form->get_data()) {
-
   try{
       $transaction = $DB->start_delegated_transaction();
       $table = 'randomstrayquotes_quotes';
@@ -64,13 +67,9 @@ if ($data = $form->get_data()) {
       }
       redirect($url, 'Transaction successful', 3);
 
-/*
-  echo('<pre>');
-  var_dump($data); die;
-echo('<pre>');
-*/
-
 }
+
+// We display the page
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Add a Quote');
 echo $form->display();

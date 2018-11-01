@@ -85,13 +85,9 @@ echo $OUTPUT->header();
 // Conditions to show the intro can change to look for own settings or whatever.
 
 if ($randomstrayquotes->intro) {
-    echo $OUTPUT->box(format_module_intro('randomstrayquotes', $newmodule, $cm->id), 'generalbox mod_introbox', 'newmoduleintro');
+    echo $OUTPUT->box(format_module_intro('randomstrayquotes', $randomstrayquotes, $cm->id), 'generalbox mod_introbox', 'randomstrayquotesintro');
 }
 
-
-if ($randomstrayquotes->intro) {
-    echo $OUTPUT->box(format_module_intro('randomstrayquotes', $randomstrayquotes, $cm->id), 'generalbox mod_introbox', 'newmoduleintro');
-}
 
 // Replace the following lines with you own code.
 echo $OUTPUT->heading('Manage Quotes');
